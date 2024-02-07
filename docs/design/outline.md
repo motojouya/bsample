@@ -52,7 +52,7 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
 - 購入履歴一覧
   /order_histories
 - 購入履歴詳細
-  /order_histories/<>
+  /order_histories/<order-id>
 
 ### 店舗管理者
 - 店舗一覧
@@ -69,8 +69,8 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
   /stores/<store-name>/order_histories
 - 注文履歴詳細
   /stores/<store-name>/order_histories/<order-id>
-- メンバー承諾画面（ランダムなパス発行）
-  /stores/<store-name>/members/verify/<token>
+- メンバー承諾画面
+  /stores/<store-name>/members/verify
 
 ### 出店者（店舗管理者の権限を含む）
 - 店舗編集
@@ -78,7 +78,7 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
   - 作成
   - 削除
 - メンバー編集
-  /stores/<store-name>/members/<member-name>
+  /stores/<store-name>/members/<user-identifier>
   - 追加
   - 削除
   - 権限変更
@@ -91,15 +91,15 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
 ## schema
 
 - user
-  - user_id(emailと同じ)
+  - user_id
+  - identifier(emailと同じ)
   - name
   - created_date
   - updated_date
 - user_email
   - user_id
   - email
-  - email_token
-  - email_verifid
+  - email_pin
   - created_date
   - verified_date
 - user_password
@@ -110,7 +110,6 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
 - user_plan
   - user_id
   - plan
-  - created_date
   - updated_date
 - store
   - store_id
@@ -120,9 +119,19 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
 - store_user
   - store_id
   - user_id
-  - authority(owner,staff)
+  - role_id
   - created_date
   - updated_date
+- role
+  - role_id
+  - name(owner,staff,none)
+- store_user_invitation
+  - store_id
+  - user_id
+  - invitation_pin
+  - invited_date
+  - expired_date
+  - accepted_date
 - menu
   - store_id
   - menu_id
@@ -130,10 +139,12 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
   - price
   - created_date
   - updated_date
+  - updated_user_id
 - order
   - order_id
+  - order_name(order_idと同じだが見えていいもの)
   - store_id
-  - user_id
+  - order_user_id
   - created_date
 - order_detail
   - order_id
@@ -141,8 +152,55 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
   - menu_id
   - quantity
 
+## plans
+1. ログイン
+  - ログイン
+  - ユーザ登録
+  - ユーザ設定
+2. 店舗
+  - プラン変更
+  - 店舗作成
+  - 店舗検索
+3. メニュー
+  - メニュー編集
+  - 注文
+  - 注文履歴
+4. メンバー
+  - メンバー編集
+  - メンバー一覧
 
+上記の順番で作っていく
+それぞれ、graphql定義->フロント->RDBスキーマ定義->サーバという順番
 
+## 構成
+- top level
+  gitignoreとか、docker-compose.ymlとか、readmeとか
+- docs
+  ドキュメント
+- lb
+  リクエストのハンドリング
+  /app path以下はserverに流し、それ以外はfrontに流したい
+  nginx
+- memory
+  認証情報
+  redis
+- front
+  フロントのビルド用
+  静的なファイルを配信する
+- schema
+  graphql schemaの定義
+  ここを参照してfrontとappのスキーマを定義する
+  ディレクトリは用意するが、コンテナイメージはつくらない
+- server
+  本体
+  node.js
+- rdb
+  postgresql
 
-
+## 技術要素
+- graphql
+- prisma
+- nest.js
+- react
+- next.js
 
