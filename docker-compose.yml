@@ -1,0 +1,85 @@
+version: '3.1'
+
+services:
+  proxy:
+    depends_on:
+      - server
+      - front
+    build: "./proxy"
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - "server:server"
+      - "front:front"
+  front:
+    build: "./front"
+  server:
+    build: "./server"
+    depends_on:
+      - rdb
+      - memory
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./server:/usr/local/src/bsample"
+    links:
+      - "rdb:rdb"
+      - "memory:memory"
+    environment:
+      PORT: 3000
+      NODE_ENV: develop
+      SESSION_SECRET: secret
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_NAME: tabinote
+      PG_HOST: rdb
+      PG_PORT: 5432
+  rdb:
+    build: "./rdb"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bsample
+    ports:
+      - "5432:5432"
+  memory:
+    build: "./rdb"
+    ports:
+      - "6379:6379"
+  front_test:
+    depends_on:
+      - front
+    build: "./front_test"
+    volumes:
+      - "~/Develop/tabinote/test:/usr/local/src/tabinote"
+    links:
+      - "rdb:rdb"
+      - "server:server"
+    environment:
+    command: "dockerize -timeout 60s -wait tcp://rdb:5432 npm run test"
+  server_test:
+    depends_on:
+      - rdb
+      - server
+    build: "./server_test"
+    volumes:
+      - "~/Develop/tabinote/test:/usr/local/src/tabinote"
+    links:
+      - "rdb:rdb"
+      - "server:server"
+    environment:
+      PG_USER: postgres
+      PG_PASS: postgres
+      PG_NAME: hotline
+      PG_HOST: rdb
+      PG_PORT: 5432
+      PGPASSWORD: postgres
+      APP_HOST: app
+      APP_PORT: 3000
+    command: "dockerize -timeout 60s -wait tcp://rdb:5432 npm run test"
+  entrance:
+    depends_on:
+      - front
+      - server
+    build: "./entrance"
