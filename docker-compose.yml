@@ -7,8 +7,7 @@ services:
       - front
     build: "./proxy"
     ports:
-      - "80:80"
-      - "443:443"
+      - "3000:80"
     links:
       - "server:server"
       - "front:front"
@@ -19,8 +18,6 @@ services:
     depends_on:
       - rdb
       - memory
-    ports:
-      - "3000:3000"
     volumes:
       - "./server:/usr/local/src/bsample"
     links:
@@ -39,12 +36,15 @@ services:
     build: "./rdb"
     restart: always
     environment:
+      POSTGRES_USER: bsample
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: bsample
+    volumes:
+      - rdb:/var/lib/postgresql/data
     ports:
       - "5432:5432"
   memory:
-    build: "./rdb"
+    build: "./memory"
     ports:
       - "6379:6379"
   front_test:
@@ -54,8 +54,7 @@ services:
     volumes:
       - "~/Develop/tabinote/test:/usr/local/src/tabinote"
     links:
-      - "rdb:rdb"
-      - "server:server"
+      - "front:front"
     environment:
     command: "dockerize -timeout 60s -wait tcp://rdb:5432 npm run test"
   server_test:
@@ -82,4 +81,9 @@ services:
     depends_on:
       - front
       - server
+    links:
+      - "rdb:rdb"
+      - "memory:memory"
     build: "./entrance"
+volumes:
+  - rdb:
