@@ -13,13 +13,19 @@ services:
       - "front:front"
   front:
     build: "./front"
+    tty: true
+    volumes:
+      - "./front:/app"
+    command: sh -c "npm run dev"
   server:
     build: "./server"
+    tty: true
     depends_on:
       - rdb
       - memory
     volumes:
-      - "./server:/usr/local/src/bsample"
+      - "./server:/app"
+    command: sh -c "npm run dev"
     links:
       - "rdb:rdb"
       - "memory:memory"
