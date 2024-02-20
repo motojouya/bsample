@@ -1,0 +1,24 @@
+#!/bin/bash
+
+container=$1
+script=$2
+
+if [ -z $script ]; then
+  docker compose exec $container bash
+else
+  if [ $container = "front" ]; then
+    docker compose exec $container npm run $script
+  elif [ $container = "server" ]; then
+    docker compose exec $container npm run $script
+  elif [ $container = "front_test" ]; then
+    docker compose exec $container npm run $script
+  elif [ $container = "server_test" ]; then
+    docker compose exec $container npm run $script
+  elif [ $container = "memory" ]; then
+    docker compose exec $container redis-cli
+  elif [ $container = "rdb" ]; then
+    docker compose exec $container psql -U bsample
+  else
+    echo "no such container"
+  fi
+fi

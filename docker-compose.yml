@@ -2,7 +2,13 @@ version: '3.1'
 
 services:
   front:
-    build: "./front"
+    build:
+      context: "./front"
+      args:
+        - UID
+        - GID
+        - USERNAME=bsample
+        - GROUPNAME=bsample
     tty: true
     volumes:
       - "./front:/srv"
@@ -14,7 +20,13 @@ services:
     ports:
       - "3000:3000"
   server:
-    build: "./server"
+    build:
+      context: "./server"
+      args:
+        - UID
+        - GID
+        - USERNAME=bsample
+        - GROUPNAME=bsample
     tty: true
     depends_on:
       - rdb
@@ -29,26 +41,38 @@ services:
       PORT: 3000
       NODE_ENV: develop
       SESSION_SECRET: secret
-      PG_USER: postgres
-      PG_PASSWORD: postgres
-      PG_NAME: tabinote
+      PG_USER: bsample
+      PG_PASSWORD: bsample
+      PG_NAME: bsample
       PG_HOST: rdb
       PG_PORT: 5432
   rdb:
-    build: "./rdb"
+    build:
+      context: "./rdb"
+      args:
+        - UID
+        - GID
+        - USERNAME=bsample
+        - GROUPNAME=bsample
     restart: always
     environment:
       POSTGRES_USER: bsample
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: bsample
       POSTGRES_DB: bsample
     volumes:
       - rdb:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
   memory:
-    build: "./memory"
-    ports:
-      - "6379:6379"
+    build:
+      context: "./memory"
+      args:
+        - UID
+        - GID
+        - USERNAME=bsample
+        - GROUPNAME=bsample
+    # ports:
+    #   - "6379:6379"
 #  front_test:
 #    depends_on:
 #      - front
