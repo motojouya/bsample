@@ -1,6 +1,24 @@
 version: '3.1'
 
 services:
+  # fronttry:
+  #   build:
+  #     context: "./fronttry"
+  #     args:
+  #       - UID
+  #       - GID
+  #       - USERNAME=bsample
+  #       - GROUPNAME=bsample
+  #   tty: true
+  #   volumes:
+  #     - "./fronttry:/srv"
+  #   depends_on:
+  #     - server
+  #   links:
+  #     - "server:server"
+  #   # command: sh -c "npm run dev"
+  #   ports:
+  #     - "3000:3000"
   front:
     build:
       context: "./front"
