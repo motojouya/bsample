@@ -30,9 +30,14 @@ export const Header = () => {
     <header className="sticky flex justify-between px-8 w-screen h-16 bg-teal-400 items-center drop-shadow-2xl border-b border-gray-300 shadow-md">
       <h1 className="font-bold text-2xl">bsample</h1>
       <div className="flex gap-3">
-        <Link href={'/login'} target="_blank" rel="noreferrer" >
-          <div class="w-100 h-20 flex items-center">
+        <Link href={'/login'}>
+          <div className="w-100 h-20 flex items-center">
             <span>ログイン</span>
+          </div>
+        </Link>
+        <Link href={'/settings'}>
+          <div className="w-100 h-20 flex items-center">
+            <span>設定へ</span>
           </div>
         </Link>
       </div>

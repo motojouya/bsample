@@ -36,7 +36,6 @@
     - password
     - name
     - submit botton
-  - login link
 - 設定トップ  
   /app/setting/page.tsx  
   client component  
