@@ -10,6 +10,11 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@nestjs/cli": "^10.3.2",
+    "@nestjs/common": "^10.3.3",
+    "@nestjs/core": "^10.3.3",
+    "reflect-metadata": "^0.2.1",
+    "rxjs": "^7.8.1"
+  }
 }
-
