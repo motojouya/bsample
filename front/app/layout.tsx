@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/app/globals.css";
 import Link from "next/link"
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <Header />
         {children}
+        <Toaster />
       </body>
     </html>
   );
@@ -35,7 +37,7 @@ export const Header = () => {
             <span>ログイン</span>
           </div>
         </Link>
-        <Link href={'/settings'}>
+        <Link href={'/setting'}>
           <div className="w-100 h-20 flex items-center">
             <span>設定へ</span>
           </div>

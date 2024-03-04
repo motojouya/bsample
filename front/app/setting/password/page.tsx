@@ -9,13 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form } from "@/components/ui/form"
 import { toast } from "@/components/ui/use-toast"
-import { useToast } from "@/components/ui/use-toast"
 
-import {
-  userIdSchema,
-  userIdDefaultValue,
-  UserIdInputForm,
-} from '@/app/UserIdForm';
 import {
   passwordSchema,
   passwordDefaultValue,
@@ -23,44 +17,10 @@ import {
 } from '@/app/PasswordForm';
 
 const FormSchema = z.object({
-  ...userIdSchema,
   ...passwordSchema,
-})
+});
 
-export default function Home() {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      ...userIdDefaultValue,
-      ...passwordDefaultValue,
-    },
-  })
-  const { toast } = useToast();
-
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="flex w-full max-w-sm items-center space-x-2">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit(toast))} className="w-2/3 space-y-6">
-            <UserIdInputForm form={form} />
-            <PasswordInputForm form={form} />
-            <Button type="submit">ログイン</Button>
-          </form>
-        </Form>
-      </div>
-      <div className="flex w-full max-w-sm items-center space-x-2">
-        <Link href={'/register'}>
-          <div className="w-100 h-20 flex items-center">
-            <span>ユーザ登録</span>
-          </div>
-        </Link>
-      </div>
-    </main>
-  );
-}
-
-const onSubmit = (toast) => (data: z.infer<typeof FormSchema>) => {
-  console.log('onSubmit login');
+function onSubmit(data: z.infer<typeof FormSchema>) {
   toast({
     title: "You submitted the following values:",
     description: (
@@ -69,4 +29,34 @@ const onSubmit = (toast) => (data: z.infer<typeof FormSchema>) => {
       </pre>
     ),
   })
-};
+}
+
+export default function Home() {
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      ...passwordDefaultValue,
+    },
+  })
+
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <div className="flex w-full max-w-sm items-center space-x-2">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+            <PasswordInputForm form={form} />
+            <Button type="submit">登録</Button>
+          </form>
+        </Form>
+      </div>
+      <div className="flex w-full max-w-sm items-center space-x-2">
+        <Link href={'/setting'}>
+          <div className="w-100 h-20 flex items-center">
+            <span>設定へ</span>
+          </div>
+        </Link>
+      </div>
+    </main>
+  );
+}
