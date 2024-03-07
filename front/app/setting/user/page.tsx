@@ -10,11 +10,12 @@ import { Input } from "@/components/ui/input"
 import { Form } from "@/components/ui/form"
 import { toast } from "@/components/ui/use-toast"
 
+import { useLoginUser } from "@/app/LoginUserProvider"
 import {
   userNameSchema,
   userNameDefaultValue,
   UserNameInputForm,
-} from '@/app/UserNameForm';
+} from '@/components/parts/UserNameForm';
 
 const FormSchema = z.object({
   ...userNameSchema,
@@ -33,10 +34,11 @@ function onSubmit(data: z.infer<typeof FormSchema>) {
 
 export default function Home() {
 
+  const loginUser = useLoginUser();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      ...userNameDefaultValue,
+      ...(userNameDefaultValue(loginUser.name)),
     },
   })
 

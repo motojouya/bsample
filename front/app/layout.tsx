@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "@/app/globals.css";
 import Link from "next/link"
 import { Toaster } from "@/components/ui/toaster";
+import { LoginUserProvider } from "@/app/LoginUserProvider"
+import { Header } from "@/app/Header"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,34 +18,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // const user = null;
+  const user = {
+    id: 'id',
+    name: 'name',
+    email: 'email',
+  };
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
-        {children}
-        <Toaster />
+        <LoginUserProvider user={user}>
+          <Header />
+            {children}
+          <Toaster />
+        </LoginUserProvider>
       </body>
     </html>
   );
 }
-
-export const Header = () => {
-  return (
-    <header className="sticky flex justify-between px-8 w-screen h-16 bg-teal-400 items-center drop-shadow-2xl border-b border-gray-300 shadow-md">
-      <h1 className="font-bold text-2xl">bsample</h1>
-      <div className="flex gap-3">
-        <Link href={'/login'}>
-          <div className="w-100 h-20 flex items-center">
-            <span>ログイン</span>
-          </div>
-        </Link>
-        <Link href={'/setting'}>
-          <div className="w-100 h-20 flex items-center">
-            <span>設定へ</span>
-          </div>
-        </Link>
-      </div>
-    </header>
-  );
-};
-

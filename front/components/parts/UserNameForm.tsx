@@ -17,9 +17,9 @@ export const userNameSchema = {
   }),
 };
 
-export const userNameDefaultValue = {
-  user_name: "",
-};
+export const userNameDefaultValue = defaultValue => ({
+  user_name: defaultValue,
+});
 
 export const UserNameInputForm = ({ form }) => (
   <>

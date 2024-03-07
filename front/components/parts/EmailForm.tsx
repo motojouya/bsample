@@ -29,11 +29,11 @@ export const emailSchema = {
   email_status: z.string().min(2, {}),
 };
 
-export const emailDefaultValue = {
-  email: "",
+export const emailDefaultValue = defaultValue => ({
+  email: defaultValue,
   email_pin: "",
   email_status: EMAIL_VERIFICATION_NONE,
-};
+});
 
 const emailOnChange = (field, setValue) => (e) => {
   if (e.target.value) {

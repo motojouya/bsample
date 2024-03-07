@@ -14,7 +14,7 @@ import {
   passwordSchema,
   passwordDefaultValue,
   PasswordInputForm,
-} from '@/app/PasswordForm';
+} from '@/components/parts/PasswordForm';
 
 const FormSchema = z.object({
   ...passwordSchema,

@@ -14,17 +14,17 @@ import {
   userNameSchema,
   userNameDefaultValue,
   UserNameInputForm,
-} from '@/app/UserNameForm';
+} from '@/components/parts/UserNameForm';
 import {
   passwordSchema,
   passwordDefaultValue,
   PasswordInputForm,
-} from '@/app/PasswordForm';
+} from '@/components/parts/PasswordForm';
 import {
   emailSchema,
   emailDefaultValue,
   EmailInputForm,
-} from '@/app/EmailForm';
+} from '@/components/parts/EmailForm';
 
 const FormSchema = z.object({
   ...userNameSchema,
@@ -48,9 +48,9 @@ export default function Home() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      ...userNameDefaultValue,
+      ...(userNameDefaultValue('')),
       ...passwordDefaultValue,
-      ...emailDefaultValue
+      ...(emailDefaultValue(''))
     },
   })
 

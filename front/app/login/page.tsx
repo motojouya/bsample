@@ -15,12 +15,12 @@ import {
   userIdSchema,
   userIdDefaultValue,
   UserIdInputForm,
-} from '@/app/UserIdForm';
+} from '@/components/parts/UserIdForm';
 import {
   passwordSchema,
   passwordDefaultValue,
   PasswordInputForm,
-} from '@/app/PasswordForm';
+} from '@/components/parts/PasswordForm';
 
 const FormSchema = z.object({
   ...userIdSchema,

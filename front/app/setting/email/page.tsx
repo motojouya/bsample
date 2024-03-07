@@ -10,11 +10,12 @@ import { Input } from "@/components/ui/input"
 import { Form } from "@/components/ui/form"
 import { toast } from "@/components/ui/use-toast"
 
+import { useLoginUser } from "@/app/LoginUserProvider"
 import {
   emailSchema,
   emailDefaultValue,
   EmailInputForm,
-} from '@/app/EmailForm';
+} from '@/components/parts/EmailForm';
 
 const FormSchema = z.object({
   ...emailSchema
@@ -33,10 +34,11 @@ function onSubmit(data: z.infer<typeof FormSchema>) {
 
 export default function Home() {
 
+  const loginUser = useLoginUser();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      ...emailDefaultValue
+      ...(emailDefaultValue(loginUser.email))
     },
   })
 
