@@ -20,9 +20,9 @@ export default function RootLayout({
 }>) {
   // const user = null;
   const user = {
-    id: 'id',
-    name: 'name',
-    email: 'email',
+    id: 'identifier',
+    name: 'motojouya',
+    email: 'motojouya@example.com',
   };
   return (
     <html lang="en">
