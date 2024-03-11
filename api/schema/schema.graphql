@@ -10,14 +10,25 @@ type Email {
   verified: Boolean!
 }
 
+input SendEmailInput {
+  email: Email!
+}
+
+input VerifyEmailInput {
+  register_session_id: ID
+  email: Email!
+  email_pin: Email!
+}
+
 input RegisterInput {
+  register_session_id: ID!
   name: String!
   email: Email!
   password: String!
 }
 
 input LoginInput {
-  ID: ID!
+  id: ID!
   password: String!
 }
 
@@ -34,7 +45,9 @@ input PasswordInput {
 }
 
 type Mutation {
-  register(input: RegisterInput): Void
+  sendEmail(input: SendEmailInput): String
+  verifyEmail(input: VerifyEmailInput): Boolean
+  register(input: RegisterInput): User
   login(input: LoginInput): User
   changeUserInformation(input: UserInput!): User
   changeEmail(input: EmailInput!): User

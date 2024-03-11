@@ -88,3 +88,28 @@ type Query {
   - user
   - user_email
 
+## 機能
+### register
+1. sendEmail  
+  clientはemailをseverに送信
+  serverはpin numberをemailに送信  
+  serverは、userをname, passwordを空白のまま作成  
+  同時にserverはuser_emailを作成  
+  serverはclientにregister_session_idを送信する  
+2. verifyEmail
+  clientはregister_session_idとemail、pin numberをserverに送信  
+  serverはpin_number、email、register_session_idでverification
+  serverはclientにbooleanを送信
+3. register
+  clientはregister_session_id,email,name,passwordをserverに送信
+  userをactivate
+
+その他
+  assign_expired_dateまでは、register sessionを継続可能で、それ以降は再度emailをverifyする必要がある
+  逆にそれまでは、そのemailを利用してuserを作ることができない
+
+
+
+
+
+

@@ -94,7 +94,9 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
   - user_id
   - identifier(emailと同じ)
   - name
+  - register_session_id
   - email(user_email forign key)
+  - active
   - created_date
   - updated_date
 - user_email
@@ -103,6 +105,7 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
   - email_pin
   - created_date
   - verified_date
+  - assign_expired_date
 - user_password
   - user_id
   - password
