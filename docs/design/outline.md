@@ -92,6 +92,7 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
 - domain
   この下はgraphqlの型とDBのschema最小公倍数で切っていく  
   domain的なモジュールを表現するので、特定の機能、つまりquery、mutation、usecaseは入らない  
+  この下のモジュール名は、名詞
   - user
   - user_email
   - store
@@ -99,7 +100,8 @@ toBシステムにおいて、消費者がなんらかの注文をし、それ�
 - usecase
   この下はdomainを利用して機能として切り出すもの
   graphql的にはquery、mutationなどはここに入る
-  - 利用者
+  この下のモジュール名は動詞、あるいは行動を示す名詞
+  - 利用
     - ログイン
     - 登録
     - 情報編集
