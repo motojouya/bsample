@@ -18,7 +18,6 @@ export class EngageResolver {
   async sendEmail(@Args('input') input: SendEmailInput) {
     const { email } = input;
     const loginUser = session.user; // TODO
-    const mailer = {}; // TODO
 
     return await engageService.sendEmail(mailer, loginUser, email);
   }

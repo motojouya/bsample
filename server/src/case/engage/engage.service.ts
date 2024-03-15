@@ -23,13 +23,13 @@ export class RecordNotFoundError {
 @Injectable()
 export class EngageService {
   constructor(
-    @Inject('PHOTO_REPOSITORY')
-    private userRepository: Repository<User>,
-    private userEmailRepository: Repository<UserEmail>,
-    private userPasswordRepository: Repository<UserPassword>,
+    @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
+    @Inject('USER_EMAIL_REPOSITORY') private userEmailRepository: Repository<UserEmail>,
+    @Inject('USER_PASSWORD_REPOSITORY') private userPasswordRepository: Repository<UserPassword>,
+    private mailService: MailService,
   ) {}
 
-  async sendEmail(mailer, loginUser: User | null, email: string): Promise<string | RecordAlreadyExistError> {
+  async sendEmail(loginUser: User | null, email: string): Promise<string | RecordAlreadyExistError> {
 
     // TODO ここでは、assignされておらず、かつassign_expiredされていないemailを探す
     // select *
@@ -69,7 +69,7 @@ export class EngageService {
       assign_expired_date: (new Date()).add(HOUR, 1),
     });
 
-    const error = await mailer.send(email, email_pin); // TODO
+    const error = await mailService.sendEmailPin(email, email_pin, user.name);
     if (error) {
       return error;
     }
@@ -120,6 +120,7 @@ export class EngageService {
 
   async register(register_session_id, name, email, password): Promise<User | RecordNotFoundError> {
 
+    // TODO register_session_idをexpiredさせるタイミングがあったほうがいいかも
     const user = await this.userRepository.get({
       register_session_id: register_session_id,
     });
@@ -152,9 +153,13 @@ export class EngageService {
   }
 
   async changeUserInformation(loginUser: User, name: string): Promise<User> {
-    return await this.userRepository.update({
+    await this.userRepository.update({
       user_id: loginUser.id,
       name: name,
+    });
+
+    return await this.userRepository.get({
+      user_id: loginUser.id,
     });
   }
 
@@ -170,7 +175,7 @@ export class EngageService {
   }
 
   async changeEmail(loginUser: User, email: string): Promise<User | RecordNotFoundError> {
-    const userEmail = userEmailService.get({
+    const userEmail = this.userEmailRepository.get({
       user_id: loginUser.id
       email,
       verified: true,
@@ -179,9 +184,13 @@ export class EngageService {
       return new RecordNotFoundError('user_email', { user_id: loginUser.id, email: email }, 'email is not verified!');
     }
 
-    return this.userService.update({
+    this.userRepository.update({
       user_id: loginUser.id,
       email: email,
+    });
+
+    return await this.userRepository.get({
+      user_id: loginUser.id,
     });
   }
 }

@@ -14,6 +14,9 @@ import { EngageService } from './case/engage/engage.service';
 import { EngageResolver } from './case/engage/engage.resolver';
 import { EngageModule } from './case/engage/engage.module';
 import { UserModule } from './model/user/user.module';
+import { MailModule } from './infra/mail/mail.module';
+import { Rdb } from './infra/rdb/rdb';
+import { RdbModule } from './infra/rdb/rdb.module';
 
 @Module({
   imports: [
@@ -26,10 +29,12 @@ import { UserModule } from './model/user/user.module';
     }),
     UserModule,
     EngageModule,
+    MailModule,
+    RdbModule,
     // PostsModule,
   ],
   // include: [CatsModule],
   controllers: [AppController],
-  providers: [AppService, UserResolver, UserService, EngageService, EngageResolver],
+  providers: [AppService, UserResolver, UserService, EngageService, EngageResolver, Rdb],
 })
 export class AppModule {}
