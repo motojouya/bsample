@@ -142,19 +142,58 @@ app.listen(3000);
 
 
 
-const createError = require('http-errors');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const cookieSession = require("cookie-session");
-const secret = "secretCuisine123";
+import createError from 'http-errors';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import cookieSession from "cookie-session";
+import secret from "secretCuisine123";
+import passport from "passport";
+import LocalStrategy from "passport-local";
+import bcrypt from "bcrypt";
+
+import session from 'express-session';
 
 const app = express();
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async function(id, done) {
+  await User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
 
 passport.use(new LocalStrategy({
     usernameField: "username",
     passwordField: "password",
-  },function(username, password, done) {
+  }, function (username, password, done) {
+    // TODO dbアクセスして認証
+    knex("users")
+      .where({
+        name: username,
+      })
+      .select("*")
+      .then(async function (results) {
+        if (results.length === 0) {
+          return done(null, false, {message: "Invalid User"});
+        } else if (await bcrypt.compare(password, results[0].password)) {
+          return done(null, results[0]);
+        } else {
+          return done(null, false, {message: "Invalid User"});
+        }
+      })
+      .catch(function (err) {
+        console.error(err);
+        return done(null, false, {message: err.toString()})
+      });
   }
 ));
 
@@ -162,44 +201,45 @@ app.use(
   cookieSession({
     name: "session",
     keys: [secret],
-
-    // Cookie Options
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   })
 );
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: false,
+}));
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.post('/login', passport.authenticate('local'), function(req, res) {
+  // TODO
+  res.redirect('/users/' + req.user.username);
+});
 
-// authorization
-require("./config/passport")(app);
+app.post('/',
+  passport.authenticate('local',
+    {
+      failureRedirect : '/failure',
+      successRedirect : '/success'
+    }
+  )
+);
 
-// router
-app.use('/', require('./routes'));
+router.post('/logout', (req, res) => {
+  req.session.passport.user = undefined;
+  res.redirect('/');
+});
 
-// catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
   res.status(err.status || 500);
   res.render('error');
 });
-
-module.exports = app;
-
 
