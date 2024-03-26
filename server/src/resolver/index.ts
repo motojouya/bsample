@@ -7,4 +7,3 @@ export const resolvers = {
   Mutation: mutations,
   ...types,
 };
-
