@@ -1,5 +1,5 @@
-import { Book } from 'resolver/type/book';
+import { User } from 'resolver/type/user';
 
 export const types = {
-  Book
+  User,
 };

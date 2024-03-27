@@ -1,17 +1,5 @@
-
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
-
-const books = () => books;
+import engage from "resolver/query/engage";
 
 export const queries = {
-  books
+  ...engage,
 };
