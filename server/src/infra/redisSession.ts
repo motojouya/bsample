@@ -11,9 +11,9 @@ declare module 'express-session' {
 export const getSessionConfig = () => {
   const RedisStore = connectRedis(session);
   const redisClient = new Redis({
-    host: '172.17.0.2',
-    port: 6379,
-    password: 'redispass',
+    host: process.env.REDIS_HOST, //'memory',
+    port: process.env.REDIS_PORT,
+    password: '',
   });
 
   return session({

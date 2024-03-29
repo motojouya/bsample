@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  OneToMany,
+  Relation,
+} from "typeorm"
 
 @Entity()
 export class User {
@@ -25,4 +32,10 @@ export class User {
 
   @Column()
   updated_date: Date
+
+  @OneToMany(() => UserEmail, (userEmail) => userEmail.user)
+  userEmails: Relation<UserEmail[]>
+
+  @OneToOne(() => UserPassword, (userPassword) => userPassword.user)
+  password: Relation<UserPassword>
 }

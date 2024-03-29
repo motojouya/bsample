@@ -43,9 +43,11 @@ services:
       SESSION_SECRET: secret
       PG_USER: bsample
       PG_PASSWORD: bsample
-      PG_NAME: bsample
+      PG_DATABASE: bsample
       PG_HOST: rdb
       PG_PORT: 5432
+      REDIS_HOST: memory
+      REDIS_PORT: 6379
   rdb:
     build:
       context: "./rdb"

@@ -12,7 +12,7 @@ import { getApolloServer, getApolloExpressMiddleware } from 'src/infra/apollo';
 import { getSessionConfig } from 'src/infra/redisSession';
 import { getDataSource } from 'src/infra/rdb'
 
-const run = () => {
+const run = async () => {
   const app = express();
   const httpServer = http.createServer(app);
   const apollo = getApolloServer(httpServer);
@@ -31,8 +31,9 @@ const run = () => {
   const sessionConfig = getSessionConfig();
   app.use(sessionConfig);
 
+  const rdbSource = await getDataSource();
   app.use(async (req, res, next) => {
-    req.context.rdbSource = await getDataSource();
+    req.context.rdbSource = rdbSource;
     next();
   });
 
