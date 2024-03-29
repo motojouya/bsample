@@ -1,16 +1,16 @@
 import * as engage from "src/case/engage";
 
 const sendEmail = async (parent, args, contextValue, info) => {
-  const rdbConnection = contextValue.rdbConnection;
+  const rdbSource = contextValue.rdbSource;
   const mailer = contextValue.mailer;
   const { email } = input;
   const loginUser = contextValue.session.loginUser;
 
-  return await engage.sendEmail(rdbConnection, mailer, loginUser, email);
+  return await engage.sendEmail(rdbSource, mailer, loginUser, email);
 }
 
 const verifyEmail = async (parent, args, contextValue, info) => {
-  const rdbConnection = contextValue.rdbConnection;
+  const rdbSource = contextValue.rdbSource;
   const {
     register_session_id,
     email,
@@ -22,11 +22,11 @@ const verifyEmail = async (parent, args, contextValue, info) => {
     return ''; // TODO error
   }
 
-  return await engage.verifyEmail(rdbConnection, loginUser, register_session_id, email, email_pin);
+  return await engage.verifyEmail(rdbSource, loginUser, register_session_id, email, email_pin);
 }
 
 const register = async (parent, args, contextValue, info) => {
-  const rdbConnection = contextValue.rdbConnection;
+  const rdbSource = contextValue.rdbSource;
   const {
     register_session_id,
     name,
@@ -34,13 +34,13 @@ const register = async (parent, args, contextValue, info) => {
     password,
   } = input;
 
-  return await engage.register(rdbConnection, register_session_id, name, email, password);
+  return await engage.register(rdbSource, register_session_id, name, email, password);
 }
 
 const login = async (parent, args, contextValue, info) => {
-  const rdbConnection = contextValue.rdbConnection;
+  const rdbSource = contextValue.rdbSource;
   const { email, password } = args;
-  const user = await engage.login(rdbConnection, email, password);
+  const user = await engage.login(rdbSource, email, password);
 
   if (!user) {
     console.log('who are you!?');
@@ -52,33 +52,33 @@ const login = async (parent, args, contextValue, info) => {
 };
 
 const changeUserInformation = async (parent, args, contextValue, info) => {
-  const rdbConnection = contextValue.rdbConnection;
+  const rdbSource = contextValue.rdbSource;
   const { name } = input;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return ''; //TODO error
   }
-  return await engage.changeUserInformation(rdbConnection, loginUser, name);
+  return await engage.changeUserInformation(rdbSource, loginUser, name);
 }
 
 const changePassword = async (parent, args, contextValue, info) => {
-  const rdbConnection = contextValue.rdbConnection;
+  const rdbSource = contextValue.rdbSource;
   const { password } = input;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return ''; //TODO error
   }
-  return await engage.changePassword(rdbConnection, loginUser, password);
+  return await engage.changePassword(rdbSource, loginUser, password);
 }
 
 const changeEmail = async (parent, args, contextValue, info) => {
-  const rdbConnection = contextValue.rdbConnection;
+  const rdbSource = contextValue.rdbSource;
   const { email } = input;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return ''; //TODO error
   }
-  return await engage.changeEmail(rdbConnection, loginUser, email);
+  return await engage.changeEmail(rdbSource, loginUser, email);
 }
 
 export const engage = {

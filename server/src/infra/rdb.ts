@@ -1,25 +1,20 @@
-import { DataSource } from 'typeorm';
+import { DataSource } from "typeorm"
+import { list } from "./entity"
 
-// TODO export class Rdb {}
-
-export const rdbProviders = [
-  {
-    provide: 'DATA_SOURCE',
-    useFactory: async () => {
-      const dataSource = new DataSource({
-        type: 'postgresql',
-        host: 'rdb',
-        port: process.env.PG_PORT,
-        username: process.env.PG_USER,
-        password: process.env.PG_PASSWORD,
-        database: process.env.PG_DATABASE,
-        entities: [
-            __dirname + '/../**/*.entity{.ts,.js}',
-        ],
-        synchronize: true,
-      });
-
-      return dataSource.initialize();
-    },
-  },
-];
+export const getDataSource = async () => {
+  const ds = new DataSource({
+      type: "postgres",
+      host: "rdb",
+      port: process.env.PG_PORT,
+      username: process.env.PG_USER,
+      password: process.env.PG_PASSWORD,
+      database: process.env.PG_DATABASE,
+      synchronize: true,
+      logging: false,
+      entities: list,
+      migrations: [],
+      subscribers: [],
+  });
+  await ds.initialize();
+  return ds;
+};
