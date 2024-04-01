@@ -1,54 +1,45 @@
-import { Repository } from 'typeorm';
-import { User } from './user';
-import { UserEmail } from './user_email';
-import { UserPassword } from './user_password';
+import { Repository, DataSource } from 'typeorm';
+import { User } from 'src/entity/user';
+import { UserEmail } from 'src/entity/user_email';
+import { UserPassword } from 'src/entity/user_password';
+import { transact, RecordNotFoundError } from 'src/infra/rdb'
 
-export class RecordAlreadyExistError {
-  constructor(
-    readonly table: string,
-    readonly data: object,
-    readonly message: string,
-  ) {}
-}
-
-export class RecordNotFoundError {
-  constructor(
-    readonly table: string,
-    readonly keys: object,
-    readonly message: string,
-  ) {}
-}
-
+export type Register = (rdbConnection: DataSource, register_session_id: string, name: string, email: string, password: string) => Promise<User | RecordNotFoundError> => {
 export const register = async (rdbConnection, register_session_id, name, email, password): Promise<User | RecordNotFoundError> => {
 
-  // TODO register_session_idをexpiredさせるタイミングがあったほうがいいかも
-  const user = await this.userRepository.get({
-    register_session_id: register_session_id,
-  });
-  if (!user) {
-    return new RecordNotFoundError('user', { register_session_id }, 'user is not found!');
-  }
+  return await transact({ user: User, email: UserEmail, password: UserPassword }, rdbSource, async (repos) => {
+    // TODO register_session_idをexpiredさせるタイミングがあったほうがいいかも
+    const user = await repos.user.findOne({
+      register_session_id: register_session_id,
+    });
+    if (!user) {
+      return new RecordNotFoundError('user', { register_session_id }, 'user is not found!');
+    }
 
-  const userEmail = await this.userEmailRepository.get({
-    user_id: user.id
-    email,
-    verified: true,
-  });
-  if (!userEmail) {
-    return new RecordNotFoundError('user_email', { user_id: user.id, email: email, }, 'user_email is not found!');
-  }
+    const userEmail = await repos.email.findOne({
+      user_id: user.id
+      email,
+      verified: true,
+    });
+    if (!userEmail) {
+      return new RecordNotFoundError('user_email', { user_id: user.id, email: email, }, 'user_email is not found!');
+    }
 
-  const user = await this.userRepository.update({
-    user_id: user.id,
-    identifier: email,
-    name: name,
-    email: email,
-  });
+    await repos.user.update({
+      user_id: user.id,
+    },{
+      identifier: email,
+      name: name,
+      email: email,
+    });
 
-  await this.userPasswordRepositry.create({
-    user_id: user.id,
-    password: password,
-  });
+    await repos.password.create({
+      user_id: user.id,
+      password: password,
+    });
 
-  return user;
-}
+    return await repos.user.findOne({
+      user_id: user.id,
+    });
+  });
+};
