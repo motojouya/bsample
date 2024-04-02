@@ -33,3 +33,11 @@ const mailConfig = {
   //   },
   // },
 }
+
+export const getMailer = async () => {
+  return {
+    send: (to, subtitle, text) => {
+      console.log(to, subtitle, text);
+    }
+  }
+};

@@ -11,6 +11,7 @@ import "reflect-metadata"; // for typeorm
 import { getApolloServer, getApolloExpressMiddleware } from 'src/infra/apollo';
 import { getSessionConfig } from 'src/infra/redisSession';
 import { getDataSource } from 'src/infra/rdb'
+import { getMailer } from "src/infra/mail";
 
 const run = async () => {
   const app = express();
@@ -32,8 +33,10 @@ const run = async () => {
   app.use(sessionConfig);
 
   const rdbSource = await getDataSource();
+  const mailer = await getMailer();
   app.use(async (req, res, next) => {
     req.context.rdbSource = rdbSource;
+    req.context.mailer = mailer;
     next();
   });
 
