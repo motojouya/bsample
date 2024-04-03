@@ -1,31 +1,32 @@
-import { Repository } from 'typeorm';
-import { User } from './user';
-import { UserEmail } from './user_email';
+import { Repository, DataSource } from 'typeorm';
+import { User } from 'src/entity/user';
+import { UserEmail } from 'src/entity/user_email';
+import { transact, RecordNotFoundError } from 'src/infra/rdb'
 
-export class RecordNotFoundError {
-  constructor(
-    readonly table: string,
-    readonly keys: object,
-    readonly message: string,
-  ) {}
-}
+export type ChangeEmail = (rdbSource: DataSource, loginUser: User, email: string): Promise<User | RecordNotFoundError>;
+export const changeEmail: ChangeEmail = async (rdbSource, loginUser, email) => {
+  return transact({ user: User, email: UserEmail }, rdbSource, async (repos) => {
+    const userEmail = repos.email.findOne({
+      where: {
+        user_id: loginUser.id
+        email,
+        verified: Not(IsNull()),
+      },
+    });
+    if (!userEmail) {
+      return new RecordNotFoundError('user_email', { user_id: loginUser.id, email: email }, 'email is not verified!');
+    }
 
-export const changeEmail = async (rdbConnection, loginUser: User, email: string): Promise<User | RecordNotFoundError> => {
-  const userEmail = this.userEmailRepository.get({
-    user_id: loginUser.id
-    email,
-    verified: true,
+    await repos.user.update({
+      user_id: loginUser.id,
+    },{
+      email: email,
+    });
+
+    return await repos.user.findOne({
+      where: {
+        user_id: loginUser.id,
+      }
+    });
   });
-  if (!userEmail) {
-    return new RecordNotFoundError('user_email', { user_id: loginUser.id, email: email }, 'email is not verified!');
-  }
-
-  this.userRepository.update({
-    user_id: loginUser.id,
-    email: email,
-  });
-
-  return await this.userRepository.get({
-    user_id: loginUser.id,
-  });
-}
+};

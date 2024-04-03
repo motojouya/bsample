@@ -1,23 +1,22 @@
-import { Repository } from 'typeorm';
-import { User } from './user';
-import { UserEmail } from './user_email';
-import { UserPassword } from './user_password';
+import { Repository, DataSource } from 'typeorm';
+import { User } from 'src/entity/user';
+import { UserEmail } from 'src/entity/user_email';
+import { UserPassword } from 'src/entity/user_password';
+import { transact } from 'src/infra/rdb'
 
-export class RecordNotFoundError {
-  constructor(
-    readonly table: string,
-    readonly keys: object,
-    readonly message: string,
-  ) {}
-}
+export type ChangePassword = (rdbSource: DataSource, loginUser: User, password: string) => Promise<User>;
+export const changePassword: ChangePassword = async (rdbSource, loginUser, password) => {
+  return transact({ password: UserPassword, user: User }, rdbSource, (repos) => {
+    await repos.password.update({
+      user_id: loginUser.id,
+    }, {
+      password: password, // TODO 暗号化
+    });
 
-export const changePassword = async (rdbConnection, loginUser: User, password: string): Promise<User> => {
-  await this.userPasswordRepository.update({
-    user_id: loginUser.id,
-    password: password, // TODO 暗号化
-  });
-
-  return await this.userRepository.get({
-    user_id: loginUser.id,
+    return await repos.password.user.findOne({
+      where: {
+        user_id: loginUser.id,
+      },
+    });
   });
 }

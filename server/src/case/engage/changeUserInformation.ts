@@ -1,15 +1,20 @@
-import { Repository } from 'typeorm';
-import { User } from './user';
-import { UserEmail } from './user_email';
-import { UserPassword } from './user_password';
+import { Repository, DataSource } from 'typeorm';
+import { User } from 'src/entity/user';
+import { transact } from 'src/infra/rdb'
 
-export const changeUserInformation = async (rdbConnection, loginUser: User, name: string): Promise<User> => {
-  await this.userRepository.update({
-    user_id: loginUser.id,
-    name: name,
-  });
+export type ChangeUserInformation = (rdbSource: DataSource, loginUser: User, name: string) => Promise<User>;
+export const changeUserInformation: ChangeUserInformation = async (rdbSource, loginUser, name) => {
+  return transact({ user: User }, rdbSource, (repos) => {
+    await repos.user.update({
+      user_id: loginUser.id,
+    },{
+      name: name,
+    });
 
-  return await this.userRepository.get({
-    user_id: loginUser.id,
+    return await repos.user.findOne({
+      where: {
+        user_id: loginUser.id,
+      }
+    });
   });
 }

@@ -1,7 +1,7 @@
 import { DataSource, Repository } from "typeorm"
 import { list } from "./entity"
 
-export class RecordAlreadyExistError {
+export class RecordAlreadyExistError extends Error {
   constructor(
     readonly table: string,
     readonly data: object,
@@ -9,7 +9,7 @@ export class RecordAlreadyExistError {
   ) {}
 }
 
-export class RecordNotFoundError {
+export class RecordNotFoundError extends Error {
   constructor(
     readonly table: string,
     readonly keys: object,
@@ -33,13 +33,27 @@ export class RecordNotFoundError {
 // };
 
 export async function transact<T, R>(records: T, source: DataSource, callback: ((repostories: { [K keyof T]: Repository<T[K]>; }) => Promise<R>)): Promise<R> {
-  return await source.manager.transaction(() => {
-    const repositories = {};
-    for (const key in records) {
-      repositories[key] = source.getRepository(records[key]);
-    }
-    return await callback(repositories);
-  });
+  const queryRunner = dataSource.createQueryRunner();
+  await queryRunner.connect();
+
+  // TODO managerから、entityを指定して、型安全に取得できるっぽいのでmanagerを渡す形でもいいかも
+  // https://typeorm.io/working-with-entity-manager
+  const manager = queryRunner.manager;
+  const repositories = {};
+  for (const key in records) {
+    repositories[key] = manager.getRepository(records[key]);
+  }
+
+  const result = await callback(repositories);
+
+  if (result instanceof Error) {
+    await queryRunner.rollbackTransaction();
+  } else {
+    await queryRunner.commitTransaction();
+  }
+  await queryRunner.release();
+
+  return result;
 };
 
 export const getDataSource = async () => {

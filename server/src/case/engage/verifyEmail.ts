@@ -1,61 +1,69 @@
-import { Repository } from 'typeorm';
-import { User } from './user';
-import { UserEmail } from './user_email';
-import { UserPassword } from './user_password';
+import { Repository, DataSource } from 'typeorm';
+import { User } from 'src/entity/user';
+import { UserEmail } from 'src/entity/user_email';
+import { transact, RecordNotFoundError } from 'src/infra/rdb'
 
-export class RecordAlreadyExistError {
-  constructor(
-    readonly table: string,
-    readonly data: object,
-    readonly message: string,
-  ) {}
+export type VerifyEmail = (
+  rdbSource: DataSource,
+  loginUser: User,
+  register_session_id: string,
+  email: string,
+  email_pin: string
+) => Promise<null | RecordNotFoundError>;
+export const verifyEmail: VerifyEmail = async (rdbSource, loginUser, registerSessionId, email, emailPin) => {
+  return await transact({ user: User, email: UserEmail }, rdbSource, async (repos) => {
+    const userEmail = getUserEmail(repos.email, loginUser, email, emailPin, registerSessionId);
+    if (!userEmail) {
+      return new RecordNotFoundError('user_email', { email }, 'email is not found or pin is not correct!');
+    }
+
+    await repos.email.update({
+      user_id: userEmail.user_id
+      email: userEmail.email,
+    },{
+      verified_date: new Date(),
+    });
+
+    return null;
+  });
 }
 
-export class RecordNotFoundError {
-  constructor(
-    readonly table: string,
-    readonly keys: object,
-    readonly message: string,
-  ) {}
-}
-
-export const verifyEmail = async (rdbConnection, loginUser: User, register_session_id: string, email: string, email_pin: string): Promis<null | RecordNotFoundError> => {
-
-  let user = loginUser;
-  let userEmail = null;
+type GetUserEmail = (
+  emailRepository: Repository<UserEmail>,
+  user: User | null,
+  email: string,
+  emailPin: string
+  registerSessionId: string | null,
+) => Primise<UserEmail | null>;
+const getUserEmail: GetUserEmail = (emailRepository, user, email, emailPin, registerSessionId) => {
   // select *
   //   from user as u
   //  inner join user_email as ue
   //          on u.user_id = ue.user_id
   //  where ue.email = <email>
   //    and assign_expired_date < now()
-  if (user) {
-    //    and u.user_id = <user_id>
-    userEmail = await this.userEmailRepository.get({ 
-      user_id: user.id
-      email: email,
-      email_pin: email_pin,
-      assign_expired_date: new Date(),
-    });
-  } else {
-    //    and u.register_session_id = <register_session_id>
-    userEmail = await this.userEmailRepository.get({ 
-      register_session_id: register_session_id
-      email: email,
-      email_pin: email_pin,
-      assign_expired_date: new Date(),
-    });
-  }
+  //    and (u.user_id = <user_id> or u.register_session_id = <register_session_id>)
+  return await emailRepository.findOne({
+    join: {
+      alias: "email",
+      leftOuterJoin: { user: "email.user" },
+      // where: { "user.user_id": "email.user_id" },
+      // where: (qb: SelectQueryBuilder<User>) => {
+      //   qb.andWhere("email.user_id = user.user_id");
+      // },
+    },
+    where: (qb: SelectQueryBuilder<User>) => {
+      qb
+        .where("email.email = :email", { email: email })
+        .andWhere("email.assign_expired_date < now()")
+        .andWhere("email.email_pin = emailPin", { emailPin: emailPin });
 
-  if (!userEmail) {
-    return new RecordNotFoundError('user_email', { email }, 'email is not found or pin is not correct!');
-  }
-
-  await this.userEmailRepository.update({ 
-    user_id: userEmail.user_id
-    email: userEmail.email,
-    verified_date: new Date(),
+      if (user) {
+        qb.andWhere("user.user_id = :userId", { userId: user.id });
+      } else {
+        qb.andWhere("user.register_session_id = :registerSessionId", { registerSessionId: registerSessionId });
+      }
+    },
   });
+};
 
-  return null;
-}
