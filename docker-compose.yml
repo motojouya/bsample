@@ -48,6 +48,9 @@ services:
       PG_PORT: 5432
       REDIS_HOST: memory
       REDIS_PORT: 6379
+      MAIL_HOST: mail
+      MAIL_PORT: 1025
+      MAIL_FROM: motojouya@example.com
   rdb:
     build:
       context: "./rdb"
@@ -75,6 +78,16 @@ services:
         - GROUPNAME=bsample
     # ports:
     #   - "6379:6379"
+mail:
+  image: maildev/maildev
+#  container_name: maildev
+  ports:
+    - "1080:1080"
+#  environment:
+#    MH_STORAGE: maildir
+#    MH_MAILDIR_PATH: /tmp
+#  volumes:
+#    - maildir:/tmp
 #  front_test:
 #    depends_on:
 #      - front
@@ -107,3 +120,4 @@ services:
 #    command: "dockerize -timeout 60s -wait tcp://rdb:5432 npm run test"
 volumes:
   rdb:
+#  maildir: {}

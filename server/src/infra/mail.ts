@@ -1,43 +1,35 @@
+import nodemailer from "nodemailer";
 
-// TODO docker mailserverというのでdocker上から送れそうなので実装したい
-// https://github.com/docker-mailserver/docker-mailserver
-// template engineはhandlebarsがよさそう
-const sendEmailPin = async (email: string, emailPin: string, name: string): void => {
-  console.log(email, emailPin, name);
-  // await this.mailerService.sendMail({
-  //   to: mailAdress,
-  //   subject: 'テストメール',
-  //   template: './test',
-  //   context: {
-  //     name: 'テスト'
-  //   },
-  // });
-}
-
-const mailConfig = {
-  transport: {
-    host: process.env.MAIL_HOST,
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASSWORD,
-    },
-  },
-  defaults: {
-    from: process.env.MAIL_FROM,
-  },
-  // template: {
-  //   dir: join(__dirname, '/templates'),
-  //   adapter: new HandlebarsAdapter(),
-  //   options: {
-  //     strict: true,
-  //   },
-  // },
-}
+export type Send = (to: string, subject: string, text: string, from: string) => Promise<void>;
 
 export const getMailer = async () => {
-  return {
-    send: (to, subtitle, text) => {
-      console.log(to, subtitle, text);
-    }
-  }
+
+  const defaultFrom = process.env.MAIL_FROM;
+  const transporter = nodemailer.createTransport({
+    ignoreTLS:true,
+    host: process.env.MAIL_HOST,
+    // auth: {
+    //   user: process.env.MAIL_USER,
+    //   pass: process.env.MAIL_PASSWORD,
+    // },
+    port: process.env.MAIL_PORT, // 1025
+    secure: false, // true for 465, false for other ports
+    defaults: {
+      from: process.env.MAIL_FROM,
+    },
+  });
+
+  const send: Send = async (to, subject, text, from) => {
+    const fromEmail = from || defaultFrom;
+    const sendResult = await transporter.sendMail({
+      from: fromEmail,
+      to: to,
+      subject: subject,
+      text: text,
+    });
+
+    console.log('send result.', sendResult);
+  };
+
+  return { send };
 };
