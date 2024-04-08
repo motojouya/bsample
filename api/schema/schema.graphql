@@ -57,3 +57,42 @@ type Mutation {
 type Query {
   loginUser: User
 }
+
+export type ChangeEmail = (rdbSource: DataSource, loginUser: User, email: string): Promise<User | RecordNotFoundError>;
+export type ChangePassword = (rdbSource: DataSource, loginUser: User, password: string) => Promise<User>;
+export type ChangeUserInformation = (rdbSource: DataSource, loginUser: User, name: string) => Promise<User>;
+export type GetUser = (rdbSource: DataSource, loginUser: User | null) => Promise<User | null>
+export type Login = (rdbSource: DataSource, email: string, password: string) => Promise<User | null>;
+export type Register = (
+  rdbConnection: DataSource,
+  register_session_id: string,
+  name: string,
+  email: string,
+  password: string
+) => Promise<User | RecordNotFoundError>;
+export type SendEmail = (rdbConnection: DataSource, mailer: Mailer, loginUser: User | null, email: string) => Promise<string | RecordAlreadyExistError>;
+export type VerifyEmail = (
+  rdbSource: DataSource,
+  loginUser: User,
+  register_session_id: string,
+  email: string,
+  email_pin: string
+) => Promise<null | RecordNotFoundError>;
+
+// TODO 戻り値の型をこいつらとのunionに変更していく
+type RecordAlreadyExistError {
+  table: String!,
+  data: any, // TODO ?
+  message: String!,
+}
+
+type RecordNotFoundError {
+  table: String!,
+  keys: any, // TODO ?
+  message: String!,
+}
+
+type AuthenticationError {
+  userKey: String!,
+  message: String!,
+}

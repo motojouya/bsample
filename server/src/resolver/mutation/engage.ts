@@ -1,5 +1,12 @@
 import * as engage from "src/case/engage";
 
+export class AuthenticationError extends Error {
+  constructor(
+    readonly userKey: string,
+    readonly message: string,
+  ) { super(); }
+}
+
 const sendEmail = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const mailer = contextValue.mailer;
@@ -19,7 +26,7 @@ const verifyEmail = async (parent, args, contextValue, info) => {
   const loginUser = contextValue.session.loginUser;
 
   if (!register_session_id && !loginUser) {
-    return ''; // TODO error
+    return new AuthenticationError(register_session_id, 'not authenticated');
   }
 
   return await engage.verifyEmail(rdbSource, loginUser, register_session_id, email, email_pin);
@@ -43,8 +50,7 @@ const login = async (parent, args, contextValue, info) => {
   const user = await engage.login(rdbSource, email, password);
 
   if (!user) {
-    console.log('who are you!?');
-    return null;
+    return new AuthenticationError(email, 'who are you!?');
   }
   contextValue.session.loginUser = user;
 
@@ -56,7 +62,7 @@ const changeUserInformation = async (parent, args, contextValue, info) => {
   const { name } = input;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
-    return ''; //TODO error
+    return new AuthenticationError(null, 'who are you!?');
   }
   return await engage.changeUserInformation(rdbSource, loginUser, name);
 }
@@ -66,7 +72,7 @@ const changePassword = async (parent, args, contextValue, info) => {
   const { password } = input;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
-    return ''; //TODO error
+    return new AuthenticationError(null, 'who are you!?');
   }
   return await engage.changePassword(rdbSource, loginUser, password);
 }
@@ -76,7 +82,7 @@ const changeEmail = async (parent, args, contextValue, info) => {
   const { email } = input;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
-    return ''; //TODO error
+    return new AuthenticationError(null, 'who are you!?');
   }
   return await engage.changeEmail(rdbSource, loginUser, email);
 }

@@ -1,4 +1,9 @@
-import { readFileSync } from 'fs';
+import { join } from 'path';
+// import { readFileSync } from 'fs';
+
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { loadSchemaSync } from '@graphql-tools/load';
+import { addResolversToSchema } from '@graphql-tools/schema';
 
 import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from '@apollo/server/express4';
@@ -13,11 +18,20 @@ interface AppContext {
 }
 
 export const getApolloServer = (httpServer) => {
-  const typeDefs = readFileSync('../api/schema/schema.graphql', { encoding: 'utf-8' });
+  // const typeDefs = readFileSync('../api/schema/schema.graphql', { encoding: 'utf-8' });
+  //
+  // return new ApolloServer<AppContext>({
+  //   typeDefs,
+  //   resolvers,
+  //   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  // });
+  const schema = loadSchemaSync(join(__dirname, '../schema.graphql'), {
+    loaders: [new GraphQLFileLoader()],
+  });
+  const schemaWithResolvers = addResolversToSchema({ schema, resolvers });
 
-  return new ApolloServer<AppContext>({
-    typeDefs,
-    resolvers,
+  return new ApolloServer({
+    schema: schemaWithResolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 };

@@ -6,7 +6,7 @@ export class RecordAlreadyExistError extends Error {
     readonly table: string,
     readonly data: object,
     readonly message: string,
-  ) {}
+  ) { super(); }
 }
 
 export class RecordNotFoundError extends Error {
@@ -14,7 +14,7 @@ export class RecordNotFoundError extends Error {
     readonly table: string,
     readonly keys: object,
     readonly message: string,
-  ) {}
+  ) { super(); }
 }
 
 // export type TransactCallback<T, R> = (tem: TransactionalEntityManager) => Promise<R>

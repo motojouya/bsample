@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "@apollo/server": "^4.10.1",
+    "@graphql-tools/graphql-file-loader": "^8.0.1",
+    "@graphql-tools/load": "^8.0.2",
+    "@graphql-tools/schema": "^10.0.3",
     "connect-redis": "^7.1.1",
     "cors": "^2.8.5",
     "express": "^4.19.1",
