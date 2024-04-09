@@ -1,0 +1,47 @@
+input SendEmailInput {
+  email: Email!
+}
+
+input VerifyEmailInput {
+  register_session_id: ID
+  email: Email!
+  email_pin: Email!
+}
+
+input RegisterInput {
+  register_session_id: ID!
+  name: String!
+  email: Email!
+  password: String!
+}
+
+input LoginInput {
+  id: ID!
+  password: String!
+}
+
+input UserInput {
+  name: String!
+}
+
+input EmailInput {
+  email: String!
+}
+
+input PasswordInput {
+  password: String!
+}
+
+type Mutation {
+  sendEmail(input: SendEmailInput): String | RecordAlreadyExistError
+  verifyEmail(input: VerifyEmailInput): Boolean | RecordNotFoundError
+  register(input: RegisterInput): User | RecordNotFoundError
+  login(input: LoginInput): User
+  changeUserInformation(input: UserInput!): User
+  changeEmail(input: EmailInput!): User | RecordNotFoundError
+  changePassword(input: PasswordInput!): User
+}
+
+type Query {
+  loginUser: User
+}

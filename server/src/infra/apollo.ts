@@ -25,7 +25,7 @@ export const getApolloServer = (httpServer) => {
   //   resolvers,
   //   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   // });
-  const schema = loadSchemaSync(join(__dirname, '../schema.graphql'), {
+  const schema = loadSchemaSync(join(__dirname, '../../../api/schema/*.graphql'), {
     loaders: [new GraphQLFileLoader()],
   });
   const schemaWithResolvers = addResolversToSchema({ schema, resolvers });

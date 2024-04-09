@@ -12,6 +12,7 @@ services:
     tty: true
     volumes:
       - "./front:/srv"
+      - "./api:/srv/api"
     depends_on:
       - server
     links:
@@ -33,6 +34,7 @@ services:
       - memory
     volumes:
       - "./server:/srv"
+      - "./api:/srv/api"
     # command: sh -c "npm run dev"
     links:
       - "rdb:rdb"

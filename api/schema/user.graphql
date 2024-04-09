@@ -1,0 +1,27 @@
+type RecordAlreadyExistError {
+  table: String!,
+  data: String!,
+  message: String!,
+}
+
+type RecordNotFoundError {
+  table: String!,
+  keys: String!,
+  message: String!,
+}
+
+type AuthenticationError {
+  userKey: String!,
+  message: String!,
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: Email!
+}
+
+type Email {
+  email: String!
+  verified: Boolean!
+}
