@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -8,7 +9,7 @@ import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form } from "@/components/ui/form"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 
 import {
   userNameSchema,
@@ -26,24 +27,55 @@ import {
   EmailInputForm,
 } from '@/components/parts/EmailForm';
 
+import { gql } from 'graphql-request'
+import useSWR from 'swr'
+import { getFetcher } from "@/lib/fetch"
+
 const FormSchema = z.object({
   ...userNameSchema,
   ...passwordSchema,
   ...emailSchema
 });
 
-function onSubmit(data: z.infer<typeof FormSchema>) {
-  toast({
-    title: "You submitted the following values:",
-    description: (
-      <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-      </pre>
-    ),
-  })
+const fetcher = getFetcher();
+const query = gql`
+  mutation ($input: RegisterInput) {
+    register(input: $input) {
+      id
+      name
+      email {
+        email
+      }
+    }
+  }
+`
+
+function onSubmit = (router, toast) => (data: z.infer<typeof FormSchema>) {
+  const { data } = fether(query, {
+    input: {
+      register_session_id: data.register_session_id,
+      name: data.name,
+      email: data.email,
+      password: data.password,
+    }
+  });
+
+  if (data.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+    router.push('/'); // TODO server componentをreloadしてくれないとlogin userが取得できないが大丈夫？
+
+  } else {
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  }
 }
 
-export default function Home() {
+export default function Register() {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -52,13 +84,15 @@ export default function Home() {
       ...passwordDefaultValue,
       ...(emailDefaultValue(''))
     },
-  })
+  });
+  const { toast } = useToast();
+  const router = useRouter();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex w-full max-w-sm items-center space-x-2">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit(router, toast))} className="w-2/3 space-y-6">
             <UserNameInputForm form={form} />
             <EmailInputForm form={form} />
             <PasswordInputForm form={form} />
