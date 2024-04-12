@@ -45,20 +45,20 @@ const emailOnChange = (field, setValue) => (e) => {
   }
 }
 
-const emailSend = (setValue, sendEmail, emailField) => async () => {
-  const email = emailField.value;
+const emailSend = (getValues, setValue, sendEmail) => async () => {
+  const email = getValues('email');
   const result = await sendEmail(email);
   if (result) {
     setValue('email_status', EMAIL_VERIFICATION_SEND);
   }
 };
 
-const emailPinOnChange = (emailField, emailPinField, registerSessionId, setValue, sendEmail) => async (e) => {
+const emailPinOnChange = (field, getValues, setValue, registerSessionId, verifyEmail) => async (e) => {
   const pinNumber = e.target.value;
 
-  emailPinField.onChange(e);
+  field.onChange(e);
   if (pinNumber && pinNumber.length === 4) {
-    const email = emailField.value;
+    const email = getValues('email');
     const result = await verifyEmail(registerSessionId, email, pinNumber);
     if (result) {
       setValue('email_status', EMAIL_VERIFICATION_VERIFIED);
@@ -66,7 +66,7 @@ const emailPinOnChange = (emailField, emailPinField, registerSessionId, setValue
   }
 };
 
-export const EmailInputForm = ({ form, registerSessionId, verifyEmail, sendEmail }) => {
+export const EmailInputForm = ({ form, registerSessionId, sendEmail, verifyEmail }) => {
 
   const emailStatus = form.getValues('email_status');
   return (
@@ -85,7 +85,7 @@ export const EmailInputForm = ({ form, registerSessionId, verifyEmail, sendEmail
         )}
       />
       {emailStatus === EMAIL_VERIFICATION_YET && (
-          <Button type="botton" onClick={emailSend(form.setValue)}>Email Pin Number 送信</Button>
+          <Button type="botton" onClick={emailSend(form.getValues, form.setValue, sendEmail)}>Email Pin Number 送信</Button>
       )}
       {emailStatus === EMAIL_VERIFICATION_SEND && (
         <FormField
@@ -95,7 +95,12 @@ export const EmailInputForm = ({ form, registerSessionId, verifyEmail, sendEmail
             <FormItem>
               <FormLabel>Email Pin Number</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="pin number" {...field} onChange={emailPinOnChange(field, form.setValue)}/>
+                <Input
+                  {...field}
+                  type="password"
+                  placeholder="pin number"
+                  onChange={emailPinOnChange(field, form.getValues, form.setValue, registerSessionId, verifyEmail)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -108,4 +113,3 @@ export const EmailInputForm = ({ form, registerSessionId, verifyEmail, sendEmail
     </>
   );
 };
-

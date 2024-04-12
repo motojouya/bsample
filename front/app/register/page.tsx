@@ -28,7 +28,6 @@ import {
 } from '@/components/parts/EmailForm';
 
 import { gql } from 'graphql-request'
-import useSWR from 'swr'
 import { getFetcher } from "@/lib/fetch"
 
 const FormSchema = z.object({
@@ -36,8 +35,6 @@ const FormSchema = z.object({
   ...passwordSchema,
   ...emailSchema
 });
-
-const fetcher = getFetcher();
 
 const registerMutation = gql`
   mutation ($input: RegisterInput) {
@@ -62,6 +59,8 @@ const verifyEmailMutation = gql`
     verifyEmail(input: $input)
   }
 `;
+
+const fetcher = getFetcher();
 
 // TODO registerSessionId をうまく渡せるかな
 const verifyEmail = (registerSessionId, toast) => (email: string, email_pin: string) => {
@@ -113,7 +112,7 @@ const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
   }
 };
 
-function onSubmit = (router, toast) => (data: z.infer<typeof FormSchema>) {
+const onSubmit = (router, toast) => (data: z.infer<typeof FormSchema>) => {
   const { data } = fether(registerMutation, {
     input: {
       register_session_id: data.register_session_id,
