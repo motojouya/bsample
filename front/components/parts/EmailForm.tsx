@@ -45,20 +45,28 @@ const emailOnChange = (field, setValue) => (e) => {
   }
 }
 
-const emailSend = (setValue) => () => {
-  setValue('email_status', EMAIL_VERIFICATION_SEND);
-};
-
-const emailPinOnChange = (field, setValue) => (e) => {
-  const pinNumber = e.target.value;
-
-  field.onChange(e);
-  if (pinNumber && pinNumber.length === 4) {
-    setValue('email_status', EMAIL_VERIFICATION_VERIFIED);
+const emailSend = (setValue, sendEmail, emailField) => async () => {
+  const email = emailField.value;
+  const result = await sendEmail(email);
+  if (result) {
+    setValue('email_status', EMAIL_VERIFICATION_SEND);
   }
 };
 
-export const EmailInputForm = ({ form }) => {
+const emailPinOnChange = (emailField, emailPinField, registerSessionId, setValue, sendEmail) => async (e) => {
+  const pinNumber = e.target.value;
+
+  emailPinField.onChange(e);
+  if (pinNumber && pinNumber.length === 4) {
+    const email = emailField.value;
+    const result = await verifyEmail(registerSessionId, email, pinNumber);
+    if (result) {
+      setValue('email_status', EMAIL_VERIFICATION_VERIFIED);
+    }
+  }
+};
+
+export const EmailInputForm = ({ form, registerSessionId, verifyEmail, sendEmail }) => {
 
   const emailStatus = form.getValues('email_status');
   return (

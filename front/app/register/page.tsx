@@ -38,7 +38,8 @@ const FormSchema = z.object({
 });
 
 const fetcher = getFetcher();
-const query = gql`
+
+const registerMutation = gql`
   mutation ($input: RegisterInput) {
     register(input: $input) {
       id
@@ -48,10 +49,72 @@ const query = gql`
       }
     }
   }
-`
+`;
+
+const sendEmailMutation = gql`
+  mutation ($input: SendEmailInput) {
+    sendEmail(input: $input)
+  }
+`;
+
+const verifyEmailMutation = gql`
+  mutation ($input: VerifyEmailInput) {
+    verifyEmail(input: $input)
+  }
+`;
+
+// TODO registerSessionId をうまく渡せるかな
+const verifyEmail = (registerSessionId, toast) => (email: string, email_pin: string) => {
+  const { data } = fether(verifyEmailMutation, {
+    input: {
+      register_session_id: registerSessionId,
+      email,
+      email_pin,
+    }
+  });
+
+  if (data === true) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+    return true;
+
+  } else {
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+    return false;
+  }
+};
+
+const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
+  const { data } = fether(sendEmailMutation, {
+    input: {
+      email: email,
+    }
+  });
+
+  if (data) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+    setRegisterSessionId(data);
+    return true;
+
+  } else {
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+    return false;
+  }
+};
 
 function onSubmit = (router, toast) => (data: z.infer<typeof FormSchema>) {
-  const { data } = fether(query, {
+  const { data } = fether(registerMutation, {
     input: {
       register_session_id: data.register_session_id,
       name: data.name,
@@ -85,6 +148,7 @@ export default function Register() {
       ...(emailDefaultValue(''))
     },
   });
+  const [ registerSessionId, setRegisterSessionId ] = useState('');
   const { toast } = useToast();
   const router = useRouter();
 
@@ -94,7 +158,12 @@ export default function Register() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit(router, toast))} className="w-2/3 space-y-6">
             <UserNameInputForm form={form} />
-            <EmailInputForm form={form} />
+            <EmailInputForm 
+              form={form}
+              registerSessionId={registerSessionId}
+              verifyEmail={verifyEmail(registerSessionId, toast)}
+              sendEmail={sendEmail(setRegisterSessionId, toast)}
+            />
             <PasswordInputForm form={form} />
             <Button type="submit">登録</Button>
           </form>
