@@ -1,19 +1,25 @@
 input SendEmailInput {
-  email: Email!
+  email: String!
 }
+
+union SendEmailReturn = String | RecordAlreadyExistError
 
 input VerifyEmailInput {
   register_session_id: ID
-  email: Email!
+  email: String!
   email_pin: Email!
 }
+
+union VerifyEmailReturn = Boolean | RecordNotFoundError
 
 input RegisterInput {
   register_session_id: ID!
   name: String!
-  email: Email!
+  email: String!
   password: String!
 }
+
+union RegisterReturn = User | RecordNotFoundError
 
 input LoginInput {
   id: ID!
@@ -28,17 +34,19 @@ input EmailInput {
   email: String!
 }
 
+union EmailChangeReturn = User | RecordNotFoundError
+
 input PasswordInput {
   password: String!
 }
 
 type Mutation {
-  sendEmail(input: SendEmailInput): String | RecordAlreadyExistError
-  verifyEmail(input: VerifyEmailInput): Boolean | RecordNotFoundError
-  register(input: RegisterInput): User | RecordNotFoundError
+  sendEmail(input: SendEmailInput): SendEmailReturn
+  verifyEmail(input: VerifyEmailInput): VerifyEmailReturn
+  register(input: RegisterInput): RegisterReturn
   login(input: LoginInput): User
   changeUserInformation(input: UserInput!): User
-  changeEmail(input: EmailInput!): User | RecordNotFoundError
+  changeEmail(input: EmailInput!): EmailChangeReturn
   changePassword(input: PasswordInput!): User
 }
 

@@ -25,8 +25,8 @@ const FormSchema = z.object({
 });
 
 const changePasswordMutation = gql`
-  mutation ($input: PasswordInput) {
-    changePassword(input: $input) {
+  mutation ChangePassword($password: String!) {
+    changePassword(input: { password: $password }) {
       id
       name
       email {
@@ -38,10 +38,10 @@ const changePasswordMutation = gql`
 
 const fetcher = getFetcher();
 
-const onSubmit = (router, toast) => (data: z.infer<typeof FormSchema>) => {
+const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
   const { data } = fether(changePasswordMutation, {
     input: {
-      password: data.password,
+      password: formData.password,
     }
   });
 

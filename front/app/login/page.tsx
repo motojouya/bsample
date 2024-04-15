@@ -28,8 +28,8 @@ import { getFetcher } from "@/lib/fetch"
 
 const fetcher = getFetcher();
 const query = gql`
-  mutation ($input: LoginInput) {
-    login(input: $input) {
+  mutation Login($id: ID!, $password: String!) {
+    login(input: { id: $id, password: $password }) {
       id
       name
       email {
@@ -77,12 +77,12 @@ export default function Home() {
   );
 }
 
-const onSubmit = (router, toast) => async (data: z.infer<typeof FormSchema>) => {
+const onSubmit = (router, toast) => async (formData: z.infer<typeof FormSchema>) => {
 
   const { data } = await fetcher(query, {
     input: {
-      id: data.user_id,
-      password: data.password,
+      id: formData.user_id,
+      password: formData.password,
     }
   });
 

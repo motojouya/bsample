@@ -6,7 +6,7 @@ const nextConfig = {
   rewrites: () => {
     return [
       {
-        source: "api/:path*",
+        source: "/api/:path*",
         destination: `http://${serverHost}:${serverPort}/api/:path*`
       },
     ];

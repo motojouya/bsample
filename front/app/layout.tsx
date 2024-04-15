@@ -17,8 +17,8 @@ export const metadata: Metadata = {
 };
 
 const loginUserQuery = gql`
-  {
-    loginUser {
+  query getLoginUser() {
+    loginUser() {
       id
       name
       email {

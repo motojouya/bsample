@@ -26,8 +26,8 @@ const FormSchema = z.object({
 });
 
 const changeEmailMutation = gql`
-  mutation ($input: EmailInput) {
-    changeEmail(input: $input) {
+  mutation ChangeEmail($email: String!) {
+    changeEmail(input: { email: $email }) {
       id
       name
       email {
@@ -38,14 +38,14 @@ const changeEmailMutation = gql`
 `;
 
 const sendEmailMutation = gql`
-  mutation ($input: SendEmailInput) {
-    sendEmail(input: $input)
+  mutation SendEmail($email: String!) {
+    sendEmail(input: { email: $email })
   }
 `;
 
 const verifyEmailMutation = gql`
-  mutation ($input: VerifyEmailInput) {
-    verifyEmail(input: $input)
+  mutation VerifyEmailLogined($email: String!, $emailPin: Email!) {
+    verifyEmail(input: { register_session_id: null, email: $email, email_pin: $emailPin })
   }
 `;
 
@@ -99,10 +99,10 @@ const verifyEmail = (toast) => (email: string, email_pin: string) => {
   }
 };
 
-const onSubmit = (router, toast) => (data: z.infer<typeof FormSchema>) => {
+const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
   const { data } = fether(changeEmailMutation, {
     input: {
-      email: data.email,
+      email: formData.email,
     }
   });
 

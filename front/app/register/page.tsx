@@ -37,8 +37,8 @@ const FormSchema = z.object({
 });
 
 const registerMutation = gql`
-  mutation ($input: RegisterInput) {
-    register(input: $input) {
+  mutation Register($registerSessionId: ID!, $name: String!, $email: String!, $password: String!) {
+    register(input: { register_session_id: $registerSessionId, name: $name, email: $email, password: $password }) {
       id
       name
       email {
@@ -49,14 +49,14 @@ const registerMutation = gql`
 `;
 
 const sendEmailMutation = gql`
-  mutation ($input: SendEmailInput) {
-    sendEmail(input: $input)
+  mutation SendEmail($email: String!) {
+    sendEmail(input: { email: $email })
   }
 `;
 
 const verifyEmailMutation = gql`
-  mutation ($input: VerifyEmailInput) {
-    verifyEmail(input: $input)
+  mutation VerifyEmailRegisterSession($registerSessionId: ID, $email: String!, $emailPin: Email!) {
+    verifyEmail(input: { register_session_id: $registerSessionId, email: $email, email_pin: $emailPin })
   }
 `;
 
@@ -112,13 +112,13 @@ const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
   }
 };
 
-const onSubmit = (router, toast) => (data: z.infer<typeof FormSchema>) => {
+const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
   const { data } = fether(registerMutation, {
     input: {
-      register_session_id: data.register_session_id,
-      name: data.name,
-      email: data.email,
-      password: data.password,
+      register_session_id: formData.register_session_id,
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
     }
   });
 
