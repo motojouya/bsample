@@ -39,10 +39,17 @@ const FormSchema = z.object({
 const registerMutation = gql`
   mutation Register($registerSessionId: ID!, $name: String!, $email: String!, $password: String!) {
     register(input: { register_session_id: $registerSessionId, name: $name, email: $email, password: $password }) {
-      id
-      name
-      email {
-        email
+      ... on User {
+        id
+        name
+        email {
+          email
+        }
+      }
+      ... on RecordNotFoundError {
+        table
+        keys
+        message
       }
     }
   }
@@ -50,13 +57,27 @@ const registerMutation = gql`
 
 const sendEmailMutation = gql`
   mutation SendEmail($email: String!) {
-    sendEmail(input: { email: $email })
+    sendEmail(input: { email: $email }) {
+      ... on String
+      ... on RecordAlreadyExistError {
+        table
+        data
+        message
+      }
+    }
   }
 `;
 
 const verifyEmailMutation = gql`
   mutation VerifyEmailRegisterSession($registerSessionId: ID, $email: String!, $emailPin: Email!) {
-    verifyEmail(input: { register_session_id: $registerSessionId, email: $email, email_pin: $emailPin })
+    verifyEmail(input: { register_session_id: $registerSessionId, email: $email, email_pin: $emailPin }) {
+      ... on Boolean
+      ... on RecordNotFoundError {
+        table
+        keys
+        message
+      }
+    }
   }
 `;
 

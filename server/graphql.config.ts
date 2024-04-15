@@ -1,10 +1,13 @@
 import type { CodegenConfig } from "@graphql-codegen/cli";
 import type { IGraphQLConfig } from "graphql-config";
-
+import { defineConfig } from '@eddeee888/gcg-typescript-resolver-files'
+ 
+//schema: "./api/schema/user.graphql",
 const codegenConfig: CodegenConfig = {
-  schema: "api/schema/*.graphql",
+  schema: "./api/schema/*.graphql",
   generates: {
-   "./generated/graphql/": {
+    // "./generated/graphql/": defineConfig()
+    "./generated/graphql/": {
       // preset: "client",
       plugins: [
         "typescript",
@@ -36,11 +39,13 @@ const codegenConfig: CodegenConfig = {
   },
 };
 
-const config: IGraphQLConfig = {
-  schema: "api/schema/*.graphql",
-  extensions: {
-    codegen: codegenConfig,
-  },
-};
+export default codegenConfig;
 
-module.exports = config;
+// const config: IGraphQLConfig = {
+//   schema: "api/schema/*.graphql",
+//   extensions: {
+//     codegen: codegenConfig,
+//   },
+// };
+// 
+// module.exports = config;
