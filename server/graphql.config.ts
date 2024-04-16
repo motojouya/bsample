@@ -7,7 +7,7 @@ const codegenConfig: CodegenConfig = {
   schema: "./api/schema/*.graphql",
   generates: {
     // "./generated/graphql/": defineConfig()
-    "./generated/graphql/": {
+    "./generated/graphql/resolver.ts": {
       // preset: "client",
       plugins: [
         "typescript",

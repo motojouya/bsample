@@ -56,9 +56,12 @@ const registerMutation = gql`
 `;
 
 const sendEmailMutation = gql`
-  mutation SendEmail($email: String!) {
+  mutation SendEmailRegisterSession($email: String!) {
     sendEmail(input: { email: $email }) {
-      ... on String
+      ... on AnonymousUser {
+        register_session_id
+        email
+      }
       ... on RecordAlreadyExistError {
         table
         data
@@ -69,9 +72,12 @@ const sendEmailMutation = gql`
 `;
 
 const verifyEmailMutation = gql`
-  mutation VerifyEmailRegisterSession($registerSessionId: ID, $email: String!, $emailPin: Email!) {
+  mutation VerifyEmailRegisterSession($registerSessionId: ID, $email: String!, $emailPin: String!) {
     verifyEmail(input: { register_session_id: $registerSessionId, email: $email, email_pin: $emailPin }) {
-      ... on Boolean
+      ... on Email {
+        email
+        verified
+      }
       ... on RecordNotFoundError {
         table
         keys
@@ -93,7 +99,7 @@ const verifyEmail = (registerSessionId, toast) => (email: string, email_pin: str
     }
   });
 
-  if (data === true) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (data.verified) { // TODO errorの場合error objectが返ってくる。type guardしたいが
     return true;
 
   } else {
@@ -116,8 +122,8 @@ const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
     }
   });
 
-  if (data) { // TODO errorの場合error objectが返ってくる。type guardしたいが
-    setRegisterSessionId(data);
+  if (data.register_session_id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+    setRegisterSessionId(data.register_session_id);
     return true;
 
   } else {

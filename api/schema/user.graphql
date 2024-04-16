@@ -25,3 +25,8 @@ type Email {
   email: String!
   verified: Boolean!
 }
+
+type AnonymousUser {
+  register_session_id: ID!
+  email: String!
+}
