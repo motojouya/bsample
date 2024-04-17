@@ -4,8 +4,8 @@ import { transact } from 'src/infra/rdb'
 
 export type Login = (rdbSource: DataSource, email: string, password: string) => Promise<User | null>;
 export const login: Login = async (rdbSource, email, password) => {
-  return await transact({ user: User }, rdbSource, async (repos) => {
-    return await repos.user.findOne({
+  return await transact({ userRepo: User }, rdbSource, async (repos) => {
+    return await repos.userRepo.findOne({
       join: {
         alias: "user",
         innerJoin: { password: "user.password" },

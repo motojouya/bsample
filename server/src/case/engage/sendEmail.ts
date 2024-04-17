@@ -9,8 +9,8 @@ function getRandomInt(max) {
 
 export type SendEmail = (rdbConnection: DataSource, mailer: Mailer, loginUser: User | null, email: string) => Promise<string | RecordAlreadyExistError>;
 export const sendEmail: SendEmail = async (rdbConnection, mailer, loginUser, email) => {
-  return await transact({ user: User, email: UserEmail }, rdbSource, async (repos) => {
-    const duplicatedEmail = getDuplicatedEmail(repos.email, email);
+  return await transact({ userRepo: User, emailRepo: UserEmail }, rdbSource, async (repos) => {
+    const duplicatedEmail = getDuplicatedEmail(repos.emailRepo, email);
     if (duplicatedEmail) {
       return new RecordAlreadyExistError('user_email', duplicatedEmail, 'email exists already!');
     }
@@ -19,7 +19,7 @@ export const sendEmail: SendEmail = async (rdbConnection, mailer, loginUser, ema
     let user = loginUser;
     if (!user) {
       registerSessionId = getRandomInt(10000); // TODO UID
-      user = await repos.user.create({
+      user = await repos.userRepo.create({
         identifier: null,
         name: null,
         register_session_id: registerSessionId,
@@ -29,9 +29,9 @@ export const sendEmail: SendEmail = async (rdbConnection, mailer, loginUser, ema
     }
 
     const email_pin = getRandomInt(999999);
-    await repos.email.create({
-      user_id: user.id
-      email: email
+    await repos.emailRepo.create({
+      user_id: user.id,
+      email: email,
       email_pin: email_pin,
       verified_date: null,
       assign_expired_date: (new Date()).add(HOUR, 1),

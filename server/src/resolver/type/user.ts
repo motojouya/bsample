@@ -1,3 +1,4 @@
+import { UserResolvers } from 'generated/graphql/resolver';
 
 const email = async (parent, args, contextValue, info) => {
   const rdbConnection = contextValue.rdbConnection;
@@ -5,6 +6,6 @@ const email = async (parent, args, contextValue, info) => {
   return this.userEmailService.findAll(rdbConnection, { user_id, email, });
 }
 
-export const User = {
+export const User: UserResolvers = {
   email,
 };

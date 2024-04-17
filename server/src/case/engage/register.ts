@@ -18,9 +18,9 @@ export type Register = (
 ) => Promise<User | RecordNotFoundError>;
 export const register: Register = async (rdbConnection, register_session_id, name, email, password): Promise<User | RecordNotFoundError> => {
 
-  return await transact({ user: User, email: UserEmail, password: UserPassword }, rdbSource, async (repos) => {
+  return await transact({ userRepo: User, emailRepo: UserEmail, passwordRepo: UserPassword }, rdbSource, async (repos) => {
     // TODO register_session_idをexpiredさせるタイミングがあったほうがいいかも
-    const user = await repos.user.findOne({
+    const user = await repos.userRepo.findOne({
       where: {
         register_session_id: register_session_id,
       }
@@ -29,9 +29,9 @@ export const register: Register = async (rdbConnection, register_session_id, nam
       return new RecordNotFoundError('user', { register_session_id }, 'user is not found!');
     }
 
-    const userEmail = await repos.email.findOne({
+    const userEmail = await repos.emailRepo.findOne({
       where: {
-        user_id: user.id
+        user_id: user.id,
         email,
         verified_date: Not(IsNull()),
       },
@@ -40,7 +40,7 @@ export const register: Register = async (rdbConnection, register_session_id, nam
       return new RecordNotFoundError('user_email', { user_id: user.id, email: email, }, 'user_email is not found!');
     }
 
-    await repos.user.update({
+    await repos.userRepo.update({
       user_id: user.id,
     },{
       identifier: email,
@@ -48,12 +48,12 @@ export const register: Register = async (rdbConnection, register_session_id, nam
       email: email,
     });
 
-    await repos.password.create({
+    await repos.passwordRepo.create({
       user_id: user.id,
       password: password,
     });
 
-    return await repos.user.findOne({
+    return await repos.userRepo.findOne({
       where: {
         user_id: user.id,
       }

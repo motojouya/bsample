@@ -11,14 +11,14 @@ export type VerifyEmail = (
   email_pin: string
 ) => Promise<null | RecordNotFoundError>;
 export const verifyEmail: VerifyEmail = async (rdbSource, loginUser, registerSessionId, email, emailPin) => {
-  return await transact({ user: User, email: UserEmail }, rdbSource, async (repos) => {
+  return await transact({ userRepo: User, emailRepo: UserEmail }, rdbSource, async (repos) => {
     const userEmail = getUserEmail(repos.email, loginUser, email, emailPin, registerSessionId);
     if (!userEmail) {
       return new RecordNotFoundError('user_email', { email }, 'email is not found or pin is not correct!');
     }
 
-    await repos.email.update({
-      user_id: userEmail.user_id
+    await repos.emailRepo.update({
+      user_id: userEmail.user_id,
       email: userEmail.email,
     },{
       verified_date: new Date(),
@@ -32,7 +32,7 @@ type GetUserEmail = (
   emailRepository: Repository<UserEmail>,
   user: User | null,
   email: string,
-  emailPin: string
+  emailPin: string,
   registerSessionId: string | null,
 ) => Primise<UserEmail | null>;
 const getUserEmail: GetUserEmail = (emailRepository, user, email, emailPin, registerSessionId) => {

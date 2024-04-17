@@ -36,12 +36,10 @@ export const getApolloServer = (httpServer) => {
   });
 };
 
-export const getApolloExpressMiddleware = (server) => {
-  return expressMiddleware(server, {
-    context: async ({ req }) => ({
-      token: req.headers.token
-      conn: req.context.conn,
-      session: req.session,
-    }),
+export const getApolloExpressMiddleware = (server) => expressMiddleware(server, {
+  context: async ({ req }) => ({
+    token: req.headers.token,
+    conn: req.context.conn,
+    session: req.session,
   }),
-};
+});

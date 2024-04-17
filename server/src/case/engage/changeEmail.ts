@@ -3,13 +3,13 @@ import { User } from 'src/entity/user';
 import { UserEmail } from 'src/entity/user_email';
 import { transact, RecordNotFoundError } from 'src/infra/rdb'
 
-export type ChangeEmail = (rdbSource: DataSource, loginUser: User, email: string): Promise<User | RecordNotFoundError>;
+export type ChangeEmail = (rdbSource: DataSource, loginUser: User, email: string) => Promise<User | RecordNotFoundError>;
 export const changeEmail: ChangeEmail = async (rdbSource, loginUser, email) => {
-  return transact({ user: User, email: UserEmail }, rdbSource, async (repos) => {
-    const userEmail = repos.email.findOne({
+  return transact({ userRepo: User, emailRepo: UserEmail }, rdbSource, async (repos) => {
+    const userEmail = repos.emailRepo.findOne({
       where: {
-        user_id: loginUser.id
-        email,
+        user_id: loginUser.id,
+        email: email,
         verified: Not(IsNull()),
       },
     });
@@ -17,13 +17,13 @@ export const changeEmail: ChangeEmail = async (rdbSource, loginUser, email) => {
       return new RecordNotFoundError('user_email', { user_id: loginUser.id, email: email }, 'email is not verified!');
     }
 
-    await repos.user.update({
+    await repos.userRepo.update({
       user_id: loginUser.id,
     },{
       email: email,
     });
 
-    return await repos.user.findOne({
+    return await repos.userRepo.findOne({
       where: {
         user_id: loginUser.id,
       }
