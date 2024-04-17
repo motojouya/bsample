@@ -9,7 +9,7 @@ import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 
-import { resolvers } from 'src/resolver';
+import { resolvers } from 'resolver';
 
 interface AppContext {
   token?: string;

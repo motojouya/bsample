@@ -8,10 +8,10 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import "reflect-metadata"; // for typeorm
 
-import { getApolloServer, getApolloExpressMiddleware } from 'src/infra/apollo';
-import { getSessionConfig } from 'src/infra/redisSession';
-import { getDataSource } from 'src/infra/rdb'
-import { getMailer } from "src/infra/mail";
+import { getApolloServer, getApolloExpressMiddleware } from 'infra/apollo';
+import { getSessionConfig } from 'infra/redisSession';
+import { getDataSource } from 'infra/rdb'
+import { getMailer } from "infra/mail";
 
 const run = async () => {
   const app = express();

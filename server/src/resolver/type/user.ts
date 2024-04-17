@@ -1,9 +1,9 @@
 import { UserResolvers } from 'generated/graphql/resolver';
+import { getEmail } from "case/engage/user";
 
 const email = async (parent, args, contextValue, info) => {
-  const rdbConnection = contextValue.rdbConnection;
-  const { user_id, email } = paramater;
-  return this.userEmailService.findAll(rdbConnection, { user_id, email, });
+  const { user_id, email } = args;
+  return await getEmail(contextValue.rdbSource)(user_id, email);
 }
 
 export const User: UserResolvers = {

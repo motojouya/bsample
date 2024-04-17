@@ -1,11 +1,11 @@
 import { Repository, DataSource } from 'typeorm';
-import { User } from 'src/entity/user';
-import { transact } from 'src/infra/rdb'
+import { User } from 'entity/user';
+import { transact } from 'infra/rdb'
 
 export type Login = (rdbSource: DataSource, email: string, password: string) => Promise<User | null>;
 export const login: Login = async (rdbSource, email, password) => {
-  return await transact({ userRepo: User }, rdbSource, async (repos) => {
-    return await repos.userRepo.findOne({
+  return await transact(rdbSource, async (manager) => {
+    return await manager.findOne(User, {
       join: {
         alias: "user",
         innerJoin: { password: "user.password" },

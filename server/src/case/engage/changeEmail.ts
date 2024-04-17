@@ -1,31 +1,31 @@
-import { Repository, DataSource } from 'typeorm';
-import { User } from 'src/entity/user';
-import { UserEmail } from 'src/entity/user_email';
-import { transact, RecordNotFoundError } from 'src/infra/rdb'
+import { Repository, DataSource, Not, IsNull } from 'typeorm';
+import { User } from 'entity/user';
+import { UserEmail } from 'entity/user_email';
+import { transact, RecordNotFoundError } from 'infra/rdb'
 
 export type ChangeEmail = (rdbSource: DataSource, loginUser: User, email: string) => Promise<User | RecordNotFoundError>;
 export const changeEmail: ChangeEmail = async (rdbSource, loginUser, email) => {
-  return transact({ userRepo: User, emailRepo: UserEmail }, rdbSource, async (repos) => {
-    const userEmail = repos.emailRepo.findOne({
+  return transact(rdbSource, async (manager) => {
+    const userEmail = manager.findOne(UserEmail, {
       where: {
-        user_id: loginUser.id,
+        user_id: loginUser.user_id,
         email: email,
-        verified: Not(IsNull()),
+        verified_date: Not(IsNull()),
       },
     });
     if (!userEmail) {
-      return new RecordNotFoundError('user_email', { user_id: loginUser.id, email: email }, 'email is not verified!');
+      return new RecordNotFoundError('user_email', { user_id: loginUser.user_id, email: email }, 'email is not verified!');
     }
 
-    await repos.userRepo.update({
-      user_id: loginUser.id,
+    await manager.update(User, {
+      user_id: loginUser.user_id,
     },{
       email: email,
     });
 
-    return await repos.userRepo.findOne({
+    return await manager.findOne(User, {
       where: {
-        user_id: loginUser.id,
+        user_id: loginUser.user_id,
       }
     });
   });

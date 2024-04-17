@@ -1,16 +1,16 @@
-import { Repository, DataSource } from 'typeorm';
-import { User } from 'src/entity/user';
-import { UserEmail } from 'src/entity/user_email';
-import { transact, RecordAlreadyExistError } from 'src/infra/rdb'
+import { EntityManager, DataSource } from 'typeorm';
+import { User } from 'entity/user';
+import { UserEmail } from 'entity/user_email';
+import { transact, RecordAlreadyExistError } from 'infra/rdb'
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-export type SendEmail = (rdbConnection: DataSource, mailer: Mailer, loginUser: User | null, email: string) => Promise<string | RecordAlreadyExistError>;
-export const sendEmail: SendEmail = async (rdbConnection, mailer, loginUser, email) => {
-  return await transact({ userRepo: User, emailRepo: UserEmail }, rdbSource, async (repos) => {
-    const duplicatedEmail = getDuplicatedEmail(repos.emailRepo, email);
+export type SendEmail = (rdbSource: DataSource, mailer: Mailer, loginUser: User | null, email: string) => Promise<string | RecordAlreadyExistError>;
+export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) => {
+  return await transact(rdbSource, async (manager) => {
+    const duplicatedEmail = getDuplicatedEmail(manager, email);
     if (duplicatedEmail) {
       return new RecordAlreadyExistError('user_email', duplicatedEmail, 'email exists already!');
     }
@@ -19,7 +19,7 @@ export const sendEmail: SendEmail = async (rdbConnection, mailer, loginUser, ema
     let user = loginUser;
     if (!user) {
       registerSessionId = getRandomInt(10000); // TODO UID
-      user = await repos.userRepo.create({
+      user = await manager.create(User, {
         identifier: null,
         name: null,
         register_session_id: registerSessionId,
@@ -29,8 +29,8 @@ export const sendEmail: SendEmail = async (rdbConnection, mailer, loginUser, ema
     }
 
     const email_pin = getRandomInt(999999);
-    await repos.emailRepo.create({
-      user_id: user.id,
+    await manager.create(UserEmail, {
+      user_id: user.user_id,
       email: email,
       email_pin: email_pin,
       verified_date: null,
@@ -46,8 +46,8 @@ export const sendEmail: SendEmail = async (rdbConnection, mailer, loginUser, ema
   });
 };
 
-type GetDuplicatedEmail = (emailRepository: Repository<UserEmail>, email: string) => Promise<UserEmail | null>
-const getDuplicatedEmail: GetDuplicatedEmail = async (emailRepository, email) => {
+type GetDuplicatedEmail = (manager: EntityManager, email: string) => Promise<UserEmail | null>
+const getDuplicatedEmail: GetDuplicatedEmail = async (manager, email) => {
   // TODO ここでは、assignされておらず、かつassign_expiredされていないemailを探す
   // select *
   //   from user_email as ue
@@ -56,7 +56,7 @@ const getDuplicatedEmail: GetDuplicatedEmail = async (emailRepository, email) =>
   //               and ue.email = u.email
   //  where (u.id is not null or ue.assign_expired_date > now())
   //      ;
-  return await emailRepository.findOne({
+  return await manager.findOne(UserEmail, {
     join: {
       alias: "email",
       leftOuterJoin: { user: "email.user" },

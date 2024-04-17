@@ -1,4 +1,4 @@
-import * as engage from "src/case/engage";
+import engage from "case/engage";
 
 export class AuthenticationError extends Error {
   constructor(
@@ -10,7 +10,7 @@ export class AuthenticationError extends Error {
 const sendEmail = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const mailer = contextValue.mailer;
-  const { email } = input;
+  const { email } = args;
   const loginUser = contextValue.session.loginUser;
 
   return await engage.sendEmail(rdbSource, mailer, loginUser, email);
@@ -22,7 +22,7 @@ const verifyEmail = async (parent, args, contextValue, info) => {
     register_session_id,
     email,
     email_pin,
-  } = input;
+  } = args;
   const loginUser = contextValue.session.loginUser;
 
   if (!register_session_id && !loginUser) {
@@ -39,7 +39,7 @@ const register = async (parent, args, contextValue, info) => {
     name,
     email,
     password,
-  } = input;
+  } = args;
 
   return await engage.register(rdbSource, register_session_id, name, email, password);
 }
@@ -59,7 +59,7 @@ const login = async (parent, args, contextValue, info) => {
 
 const changeUserInformation = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
-  const { name } = input;
+  const { name } = args;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return new AuthenticationError(null, 'who are you!?');
@@ -69,7 +69,7 @@ const changeUserInformation = async (parent, args, contextValue, info) => {
 
 const changePassword = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
-  const { password } = input;
+  const { password } = args;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return new AuthenticationError(null, 'who are you!?');
@@ -79,7 +79,7 @@ const changePassword = async (parent, args, contextValue, info) => {
 
 const changeEmail = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
-  const { email } = input;
+  const { email } = args;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return new AuthenticationError(null, 'who are you!?');
@@ -87,7 +87,7 @@ const changeEmail = async (parent, args, contextValue, info) => {
   return await engage.changeEmail(rdbSource, loginUser, email);
 }
 
-export const engage = {
+export default {
   sendEmail,
   verifyEmail,
   register,
