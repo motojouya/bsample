@@ -30,7 +30,7 @@ const changeUserInformationMutation = gql`
     changeUserInformation(input: { name: $name }) {
       id
       name
-      email {
+      email_information {
         email
       }
     }

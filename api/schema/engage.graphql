@@ -2,18 +2,18 @@ input SendEmailInput {
   email: String!
 }
 
-union SendEmailReturn = AnonymousUser | RecordAlreadyExistError
+union SendEmailReturn = AnonymousUser | RecordAlreadyExistError | MailSendError
 
 input VerifyEmailInput {
-  register_session_id: ID
+  register_session_id: Int
   email: String!
-  email_pin: String!
+  email_pin: Int!
 }
 
 union VerifyEmailReturn = Email | RecordNotFoundError
 
 input RegisterInput {
-  register_session_id: ID!
+  register_session_id: Int
   name: String!
   email: String!
   password: String!

@@ -1,4 +1,4 @@
-import engage from "case/engage";
+import engage from "src/case/engage";
 
 export class AuthenticationError extends Error {
   constructor(

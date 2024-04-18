@@ -1,10 +1,28 @@
 import nodemailer from "nodemailer";
 
-export type Send = (to: string, subject: string, text: string, from: string) => Promise<void>;
+export type Send = (to: string, subject: string, text: string, from?: string) => Promise<null | MailSendError>;
+export type Mailer = {
+  send: Send;
+};
+
+export type MailContents = {
+  from: string,
+  to: string,
+  subject: string,
+  text: string,
+};
+
+export class MailSendError extends Error {
+  constructor(
+    readonly contents: MailContents,
+    readonly exception: object,
+    readonly message: string,
+  ) { super(); }
+}
 
 export const getMailer = async () => {
 
-  const defaultFrom = process.env.MAIL_FROM;
+  const defaultFrom = process.env.MAIL_FROM || '';
   const transporter = nodemailer.createTransport({
     ignoreTLS:true,
     host: process.env.MAIL_HOST,
@@ -20,15 +38,22 @@ export const getMailer = async () => {
   });
 
   const send: Send = async (to, subject, text, from) => {
-    const fromEmail = from || defaultFrom;
-    const sendResult = await transporter.sendMail({
-      from: fromEmail,
+    const mailContents: MailContents = {
+      from: from || defaultFrom,
       to: to,
       subject: subject,
       text: text,
-    });
+    };
 
-    console.log('send result.', sendResult);
+    try {
+      const sendResult = await transporter.sendMail(mailContents);
+      console.log('send result.', sendResult);
+      return null;
+
+    } catch (e) {
+      console.log('send failed.', e);
+      return new MailSendError(e, mailContents, 'failed send email');
+    }
   };
 
   return { send };

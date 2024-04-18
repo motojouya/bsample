@@ -8,19 +8,21 @@ import { addResolversToSchema } from '@graphql-tools/schema';
 import { ApolloServer } from "@apollo/server"
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { DataSource } from "typeorm"
 
-import { resolvers } from 'resolver';
+import { resolvers } from 'src/resolver';
+import { SessionData } from 'express-session';
+import { RequestWithContext } from 'src/index';
 
-interface AppContext {
-  token?: string;
-  conn?: object, // TODO 型違う
-  session?: object,
+interface ApolloContext {
+  rdbSource: DataSource,
+  session?: SessionData,
 }
 
 export const getApolloServer = (httpServer) => {
   // const typeDefs = readFileSync('../api/schema/schema.graphql', { encoding: 'utf-8' });
   //
-  // return new ApolloServer<AppContext>({
+  // return new ApolloServer<ApolloContext>({
   //   typeDefs,
   //   resolvers,
   //   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
@@ -30,16 +32,15 @@ export const getApolloServer = (httpServer) => {
   });
   const schemaWithResolvers = addResolversToSchema({ schema, resolvers });
 
-  return new ApolloServer({
+  return new ApolloServer<ApolloContext>({
     schema: schemaWithResolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 };
 
 export const getApolloExpressMiddleware = (server) => expressMiddleware(server, {
-  context: async ({ req }) => ({
-    token: req.headers.token,
-    conn: req.context.conn,
+  context: async ({ req }: { req: RequestWithContext }) => ({
+    rdbSource: req.context.rdbSource,
     session: req.session,
   }),
 });

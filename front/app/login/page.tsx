@@ -32,7 +32,7 @@ const query = gql`
     login(input: { id: $id, password: $password }) {
       id
       name
-      email {
+      email_information {
         email
       }
     }

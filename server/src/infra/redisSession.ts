@@ -1,18 +1,19 @@
 import session from 'express-session';
-import connectRedis from 'connect-redis';
+import RedisStore from 'connect-redis';
 import Redis from 'ioredis';
 
+import { User } from 'src/entity/user';
+
 declare module 'express-session' {
-  interface SessionData {
-    user: object;
+  export interface SessionData {
+    loginUser: User;
   }
 }
 
 export const getSessionConfig = () => {
-  const RedisStore = connectRedis(session);
   const redisClient = new Redis({
     host: process.env.REDIS_HOST, //'memory',
-    port: process.env.REDIS_PORT,
+    port: parseInt(process.env.REDIS_PORT),
     password: '',
   });
 
@@ -28,4 +29,3 @@ export const getSessionConfig = () => {
     }
   });
 };
-

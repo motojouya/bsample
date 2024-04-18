@@ -1,6 +1,6 @@
 import { Repository, DataSource } from 'typeorm';
-import { User } from 'entity/user';
-import { UserEmail } from 'entity/user_email';
+import { User } from 'src/entity/user';
+import { UserEmail } from 'src/entity/userEmail';
 
 export type GetUserById = (rdbSource: DataSource) => (userId: number) => Promise<User | null>
 export const getUserById: GetUserById = (rdbSource) => (userId) => rdbSource.manager.findOne(User, {

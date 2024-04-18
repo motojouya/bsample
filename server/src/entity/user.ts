@@ -6,6 +6,8 @@ import {
   OneToMany,
   Relation,
 } from "typeorm"
+import { UserEmail } from "src/entity/userEmail";
+import { UserPassword } from "src/entity/userPassword";
 
 @Entity()
 export class User {
@@ -33,9 +35,9 @@ export class User {
   @Column()
   updated_date: Date
 
-  @OneToMany(() => UserEmail, (userEmail) => userEmail.user)
-  userEmails: Relation<UserEmail[]>
+  @OneToMany(type => UserEmail, userEmail => userEmail.user)
+  userEmails: UserEmail[]
 
-  @OneToOne(() => UserPassword, (userPassword) => userPassword.user)
-  password: Relation<UserPassword>
+  @OneToOne(type => UserPassword, userPassword => userPassword.user)
+  password: UserPassword
 }

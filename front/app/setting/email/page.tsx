@@ -31,13 +31,11 @@ const changeEmailMutation = gql`
       ... on User {
         id
         name
-        email {
+        email_information {
           email
         }
       }
       ... on RecordNotFoundError {
-        table
-        keys
         message
       }
     }
@@ -51,8 +49,6 @@ const sendEmailMutation = gql`
         email
       }
       ... on RecordAlreadyExistError {
-        table
-        data
         message
       }
     }
@@ -60,15 +56,13 @@ const sendEmailMutation = gql`
 `;
 
 const verifyEmailMutation = gql`
-  mutation VerifyEmailLogined($email: String!, $emailPin: String!) {
+  mutation VerifyEmailLogined($email: String!, $emailPin: Int!) {
     verifyEmail(input: { register_session_id: null, email: $email, email_pin: $emailPin }) {
       ... on Email {
         email
         verified
       }
       ... on RecordNotFoundError {
-        table
-        keys
         message
       }
     }
@@ -100,7 +94,7 @@ const sendEmail = (toast) => (email: string) => {
   }
 };
 
-const verifyEmail = (toast) => (email: string, email_pin: string) => {
+const verifyEmail = (toast) => (email: string, email_pin: number) => {
   const { data } = fether(verifyEmailMutation, {
     input: {
       register_session_id: null,

@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { DeepPartial } from 'utility-types';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -19,7 +20,7 @@ export type Scalars = {
 export type AnonymousUser = {
   __typename?: 'AnonymousUser';
   email: Scalars['String']['output'];
-  register_session_id: Scalars['ID']['output'];
+  register_session_id?: Maybe<Scalars['Int']['output']>;
 };
 
 export type AuthenticationError = {
@@ -43,6 +44,11 @@ export type EmailInput = {
 export type LoginInput = {
   id: Scalars['ID']['input'];
   password: Scalars['String']['input'];
+};
+
+export type MailSendError = {
+  __typename?: 'MailSendError';
+  message: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -102,23 +108,19 @@ export type Query = {
 
 export type RecordAlreadyExistError = {
   __typename?: 'RecordAlreadyExistError';
-  data: Scalars['String']['output'];
   message: Scalars['String']['output'];
-  table: Scalars['String']['output'];
 };
 
 export type RecordNotFoundError = {
   __typename?: 'RecordNotFoundError';
-  keys: Scalars['String']['output'];
   message: Scalars['String']['output'];
-  table: Scalars['String']['output'];
 };
 
 export type RegisterInput = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  register_session_id: Scalars['ID']['input'];
+  register_session_id?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type RegisterReturn = RecordNotFoundError | User;
@@ -127,11 +129,11 @@ export type SendEmailInput = {
   email: Scalars['String']['input'];
 };
 
-export type SendEmailReturn = AnonymousUser | RecordAlreadyExistError;
+export type SendEmailReturn = AnonymousUser | MailSendError | RecordAlreadyExistError;
 
 export type User = {
   __typename?: 'User';
-  email: Email;
+  email_information: Email;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
 };
@@ -142,8 +144,8 @@ export type UserInput = {
 
 export type VerifyEmailInput = {
   email: Scalars['String']['input'];
-  email_pin: Scalars['String']['input'];
-  register_session_id?: InputMaybe<Scalars['ID']['input']>;
+  email_pin: Scalars['Int']['input'];
+  register_session_id?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type VerifyEmailReturn = Email | RecordNotFoundError;
@@ -217,68 +219,72 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes<RefType extends Record<string, unknown>> = {
-  EmailChangeReturn: ( RecordNotFoundError ) | ( User );
-  RegisterReturn: ( RecordNotFoundError ) | ( User );
-  SendEmailReturn: ( AnonymousUser ) | ( RecordAlreadyExistError );
-  VerifyEmailReturn: ( Email ) | ( RecordNotFoundError );
+  EmailChangeReturn: ( DeepPartial<RecordNotFoundError> ) | ( DeepPartial<User> );
+  RegisterReturn: ( DeepPartial<RecordNotFoundError> ) | ( DeepPartial<User> );
+  SendEmailReturn: ( DeepPartial<AnonymousUser> ) | ( DeepPartial<MailSendError> ) | ( DeepPartial<RecordAlreadyExistError> );
+  VerifyEmailReturn: ( DeepPartial<Email> ) | ( DeepPartial<RecordNotFoundError> );
 };
 
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  AnonymousUser: ResolverTypeWrapper<AnonymousUser>;
-  AuthenticationError: ResolverTypeWrapper<AuthenticationError>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
-  Email: ResolverTypeWrapper<Email>;
-  EmailChangeReturn: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['EmailChangeReturn']>;
-  EmailInput: EmailInput;
-  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
-  LoginInput: LoginInput;
+  AnonymousUser: ResolverTypeWrapper<DeepPartial<AnonymousUser>>;
+  AuthenticationError: ResolverTypeWrapper<DeepPartial<AuthenticationError>>;
+  Boolean: ResolverTypeWrapper<DeepPartial<Scalars['Boolean']['output']>>;
+  Email: ResolverTypeWrapper<DeepPartial<Email>>;
+  EmailChangeReturn: DeepPartial<ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['EmailChangeReturn']>>;
+  EmailInput: ResolverTypeWrapper<DeepPartial<EmailInput>>;
+  ID: ResolverTypeWrapper<DeepPartial<Scalars['ID']['output']>>;
+  Int: ResolverTypeWrapper<DeepPartial<Scalars['Int']['output']>>;
+  LoginInput: ResolverTypeWrapper<DeepPartial<LoginInput>>;
+  MailSendError: ResolverTypeWrapper<DeepPartial<MailSendError>>;
   Mutation: ResolverTypeWrapper<{}>;
-  PasswordInput: PasswordInput;
+  PasswordInput: ResolverTypeWrapper<DeepPartial<PasswordInput>>;
   Query: ResolverTypeWrapper<{}>;
-  RecordAlreadyExistError: ResolverTypeWrapper<RecordAlreadyExistError>;
-  RecordNotFoundError: ResolverTypeWrapper<RecordNotFoundError>;
-  RegisterInput: RegisterInput;
-  RegisterReturn: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['RegisterReturn']>;
-  SendEmailInput: SendEmailInput;
-  SendEmailReturn: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['SendEmailReturn']>;
-  String: ResolverTypeWrapper<Scalars['String']['output']>;
-  User: ResolverTypeWrapper<User>;
-  UserInput: UserInput;
-  VerifyEmailInput: VerifyEmailInput;
-  VerifyEmailReturn: ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['VerifyEmailReturn']>;
+  RecordAlreadyExistError: ResolverTypeWrapper<DeepPartial<RecordAlreadyExistError>>;
+  RecordNotFoundError: ResolverTypeWrapper<DeepPartial<RecordNotFoundError>>;
+  RegisterInput: ResolverTypeWrapper<DeepPartial<RegisterInput>>;
+  RegisterReturn: DeepPartial<ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['RegisterReturn']>>;
+  SendEmailInput: ResolverTypeWrapper<DeepPartial<SendEmailInput>>;
+  SendEmailReturn: DeepPartial<ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['SendEmailReturn']>>;
+  String: ResolverTypeWrapper<DeepPartial<Scalars['String']['output']>>;
+  User: ResolverTypeWrapper<DeepPartial<User>>;
+  UserInput: ResolverTypeWrapper<DeepPartial<UserInput>>;
+  VerifyEmailInput: ResolverTypeWrapper<DeepPartial<VerifyEmailInput>>;
+  VerifyEmailReturn: DeepPartial<ResolverTypeWrapper<ResolversUnionTypes<ResolversTypes>['VerifyEmailReturn']>>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  AnonymousUser: AnonymousUser;
-  AuthenticationError: AuthenticationError;
-  Boolean: Scalars['Boolean']['output'];
-  Email: Email;
-  EmailChangeReturn: ResolversUnionTypes<ResolversParentTypes>['EmailChangeReturn'];
-  EmailInput: EmailInput;
-  ID: Scalars['ID']['output'];
-  LoginInput: LoginInput;
+  AnonymousUser: DeepPartial<AnonymousUser>;
+  AuthenticationError: DeepPartial<AuthenticationError>;
+  Boolean: DeepPartial<Scalars['Boolean']['output']>;
+  Email: DeepPartial<Email>;
+  EmailChangeReturn: DeepPartial<ResolversUnionTypes<ResolversParentTypes>['EmailChangeReturn']>;
+  EmailInput: DeepPartial<EmailInput>;
+  ID: DeepPartial<Scalars['ID']['output']>;
+  Int: DeepPartial<Scalars['Int']['output']>;
+  LoginInput: DeepPartial<LoginInput>;
+  MailSendError: DeepPartial<MailSendError>;
   Mutation: {};
-  PasswordInput: PasswordInput;
+  PasswordInput: DeepPartial<PasswordInput>;
   Query: {};
-  RecordAlreadyExistError: RecordAlreadyExistError;
-  RecordNotFoundError: RecordNotFoundError;
-  RegisterInput: RegisterInput;
-  RegisterReturn: ResolversUnionTypes<ResolversParentTypes>['RegisterReturn'];
-  SendEmailInput: SendEmailInput;
-  SendEmailReturn: ResolversUnionTypes<ResolversParentTypes>['SendEmailReturn'];
-  String: Scalars['String']['output'];
-  User: User;
-  UserInput: UserInput;
-  VerifyEmailInput: VerifyEmailInput;
-  VerifyEmailReturn: ResolversUnionTypes<ResolversParentTypes>['VerifyEmailReturn'];
+  RecordAlreadyExistError: DeepPartial<RecordAlreadyExistError>;
+  RecordNotFoundError: DeepPartial<RecordNotFoundError>;
+  RegisterInput: DeepPartial<RegisterInput>;
+  RegisterReturn: DeepPartial<ResolversUnionTypes<ResolversParentTypes>['RegisterReturn']>;
+  SendEmailInput: DeepPartial<SendEmailInput>;
+  SendEmailReturn: DeepPartial<ResolversUnionTypes<ResolversParentTypes>['SendEmailReturn']>;
+  String: DeepPartial<Scalars['String']['output']>;
+  User: DeepPartial<User>;
+  UserInput: DeepPartial<UserInput>;
+  VerifyEmailInput: DeepPartial<VerifyEmailInput>;
+  VerifyEmailReturn: DeepPartial<ResolversUnionTypes<ResolversParentTypes>['VerifyEmailReturn']>;
 };
 
 export type AnonymousUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['AnonymousUser'] = ResolversParentTypes['AnonymousUser']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  register_session_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  register_session_id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -298,6 +304,11 @@ export type EmailChangeReturnResolvers<ContextType = any, ParentType extends Res
   __resolveType: TypeResolveFn<'RecordNotFoundError' | 'User', ParentType, ContextType>;
 };
 
+export type MailSendErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['MailSendError'] = ResolversParentTypes['MailSendError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changeEmail?: Resolver<Maybe<ResolversTypes['EmailChangeReturn']>, ParentType, ContextType, RequireFields<MutationChangeEmailArgs, 'input'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'input'>>;
@@ -313,16 +324,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type RecordAlreadyExistErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['RecordAlreadyExistError'] = ResolversParentTypes['RecordAlreadyExistError']> = {
-  data?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  table?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type RecordNotFoundErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['RecordNotFoundError'] = ResolversParentTypes['RecordNotFoundError']> = {
-  keys?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  table?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -331,11 +338,11 @@ export type RegisterReturnResolvers<ContextType = any, ParentType extends Resolv
 };
 
 export type SendEmailReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['SendEmailReturn'] = ResolversParentTypes['SendEmailReturn']> = {
-  __resolveType: TypeResolveFn<'AnonymousUser' | 'RecordAlreadyExistError', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'AnonymousUser' | 'MailSendError' | 'RecordAlreadyExistError', ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  email?: Resolver<ResolversTypes['Email'], ParentType, ContextType>;
+  email_information?: Resolver<ResolversTypes['Email'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -350,6 +357,7 @@ export type Resolvers<ContextType = any> = {
   AuthenticationError?: AuthenticationErrorResolvers<ContextType>;
   Email?: EmailResolvers<ContextType>;
   EmailChangeReturn?: EmailChangeReturnResolvers<ContextType>;
+  MailSendError?: MailSendErrorResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RecordAlreadyExistError?: RecordAlreadyExistErrorResolvers<ContextType>;

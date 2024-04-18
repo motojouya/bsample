@@ -1,5 +1,5 @@
-import engage from "resolver/mutation/engage";
-import { MutationResolvers } from 'generated/graphql/resolver';
+import engage from "src/resolver/mutation/engage";
+import { MutationResolvers } from 'src/generated/graphql/resolver';
 
 export const mutations: MutationResolvers = {
   ...engage,

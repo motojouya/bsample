@@ -29,7 +29,7 @@ const changePasswordMutation = gql`
     changePassword(input: { password: $password }) {
       id
       name
-      email {
+      email_information {
         email
       }
     }

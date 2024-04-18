@@ -1,14 +1,14 @@
-import { EntityManager, DataSource } from 'typeorm';
-import { User } from 'entity/user';
-import { UserEmail } from 'entity/user_email';
-import { transact, RecordNotFoundError } from 'infra/rdb'
+import { EntityManager, DataSource, Raw } from 'typeorm';
+import { User } from 'src/entity/user';
+import { UserEmail } from 'src/entity/userEmail';
+import { transact, RecordNotFoundError } from 'src/infra/rdb'
 
 export type VerifyEmail = (
   rdbSource: DataSource,
   loginUser: User,
-  register_session_id: string,
+  register_session_id: number,
   email: string,
-  email_pin: string
+  email_pin: number
 ) => Promise<null | RecordNotFoundError>;
 export const verifyEmail: VerifyEmail = async (rdbSource, loginUser, registerSessionId, email, emailPin) => {
   return await transact(rdbSource, async (manager) => {
@@ -28,42 +28,34 @@ export const verifyEmail: VerifyEmail = async (rdbSource, loginUser, registerSes
   });
 }
 
+// select *
+//   from user as u
+//  inner join user_email as ue
+//          on u.user_id = ue.user_id
+//  where ue.email = <email>
+//    and ue.email_pin = <email_pin>
+//    and ue.assign_expired_date < now()
+//    and (u.user_id = <user_id> or u.register_session_id = <register_session_id>)
+//      ;
 type GetUserEmail = (
   manager: EntityManager,
   user: User | null,
   email: string,
-  emailPin: string,
-  registerSessionId: string | null,
+  emailPin: number,
+  registerSessionId: number | null,
 ) => Promise<UserEmail | null>;
 const getUserEmail: GetUserEmail = async (manager, user, email, emailPin, registerSessionId) => {
-  // select *
-  //   from user as u
-  //  inner join user_email as ue
-  //          on u.user_id = ue.user_id
-  //  where ue.email = <email>
-  //    and assign_expired_date < now()
-  //    and (u.user_id = <user_id> or u.register_session_id = <register_session_id>)
   return await manager.findOne(UserEmail, {
-    join: {
-      alias: "email",
-      leftOuterJoin: { user: "email.user" },
-      // where: { "user.user_id": "email.user_id" },
-      // where: (qb: SelectQueryBuilder<User>) => {
-      //   qb.andWhere("email.user_id = user.user_id");
-      // },
-    },
-    where: (qb: SelectQueryBuilder<User>) => {
-      qb
-        .where("email.email = :email", { email: email })
-        .andWhere("email.assign_expired_date < now()")
-        .andWhere("email.email_pin = emailPin", { emailPin: emailPin });
-
-      if (user) {
-        qb.andWhere("user.user_id = :userId", { userId: user.user_id });
-      } else {
-        qb.andWhere("user.register_session_id = :registerSessionId", { registerSessionId: registerSessionId });
+    relations: [ 'user' ],
+    where: {
+      email: email,
+      email_pin: emailPin,
+      assign_expired_date: Raw((alias) => `${alias} > NOW()`),
+      user: user ? {
+        user_id: user.user_id,
+      } : {
+        register_session_id: registerSessionId,
       }
-    },
+    }
   });
 };
-

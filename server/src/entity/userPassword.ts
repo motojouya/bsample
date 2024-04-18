@@ -6,6 +6,7 @@ import {
   JoinColumn,
   Relation,
 } from "typeorm"
+import { User } from "src/entity/user";
 
 @Entity()
 export class UserPassword {
@@ -21,7 +22,7 @@ export class UserPassword {
   @Column()
   updated_date: Date
 
-  @OneToOne(() => User, (user) => user.password)
-  @JoinColumn('user_id')
-  user: Relation<User>
+  @OneToOne(type => User, user => user.password)
+  @JoinColumn({ referencedColumnName: "user_id" })
+  user: User
 }

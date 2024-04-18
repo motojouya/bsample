@@ -1,7 +1,7 @@
-import { types } from 'resolver/type';
-import { queries } from 'resolver/query';
-import { mutations } from 'resolver/mutation';
-import { Resolvers } from 'generated/graphql/resolver';
+import { types } from 'src/resolver/type';
+import { queries } from 'src/resolver/query';
+import { mutations } from 'src/resolver/mutation';
+import { Resolvers } from 'src/generated/graphql/resolver';
 
 export const resolvers: Resolvers = {
   Query: queries,

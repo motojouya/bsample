@@ -1,5 +1,5 @@
 import { DataSource, EntityManager } from "typeorm"
-import { list } from "entity"
+import { list } from "src/entity"
 
 export class RecordAlreadyExistError extends Error {
   constructor(

@@ -37,18 +37,16 @@ const FormSchema = z.object({
 });
 
 const registerMutation = gql`
-  mutation Register($registerSessionId: ID!, $name: String!, $email: String!, $password: String!) {
+  mutation Register($registerSessionId: Int!, $name: String!, $email: String!, $password: String!) {
     register(input: { register_session_id: $registerSessionId, name: $name, email: $email, password: $password }) {
       ... on User {
         id
         name
-        email {
+        email_information {
           email
         }
       }
       ... on RecordNotFoundError {
-        table
-        keys
         message
       }
     }
@@ -63,8 +61,6 @@ const sendEmailMutation = gql`
         email
       }
       ... on RecordAlreadyExistError {
-        table
-        data
         message
       }
     }
@@ -72,15 +68,13 @@ const sendEmailMutation = gql`
 `;
 
 const verifyEmailMutation = gql`
-  mutation VerifyEmailRegisterSession($registerSessionId: ID, $email: String!, $emailPin: String!) {
+  mutation VerifyEmailRegisterSession($registerSessionId: Int!, $email: String!, $emailPin: Int!) {
     verifyEmail(input: { register_session_id: $registerSessionId, email: $email, email_pin: $emailPin }) {
       ... on Email {
         email
         verified
       }
       ... on RecordNotFoundError {
-        table
-        keys
         message
       }
     }
@@ -123,7 +117,7 @@ const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
   });
 
   if (data.register_session_id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
-    setRegisterSessionId(data.register_session_id);
+    setRegisterSessionId(parseInt(data.register_session_id));
     return true;
 
   } else {
@@ -174,7 +168,7 @@ export default function Register() {
       ...(emailDefaultValue(''))
     },
   });
-  const [ registerSessionId, setRegisterSessionId ] = useState('');
+  const [ registerSessionId, setRegisterSessionId ] = useState<number>(null);
   const { toast } = useToast();
   const router = useRouter();
 

@@ -1,4 +1,4 @@
-import { getUserById } from "case/engage/user";
+import { getUserById } from "src/case/engage/user";
 
 const loginUser = async (parent, args, contextValue, info) => {
   const loginUser = contextValue.session.loginUser;

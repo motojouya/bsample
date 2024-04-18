@@ -59,7 +59,7 @@ const emailPinOnChange = (field, getValues, setValue, registerSessionId, verifyE
   field.onChange(e);
   if (pinNumber && pinNumber.length === 4) {
     const email = getValues('email');
-    const result = await verifyEmail(registerSessionId, email, pinNumber);
+    const result = await verifyEmail(registerSessionId, email, parseInt(pinNumber));
     if (result) {
       setValue('email_status', EMAIL_VERIFICATION_VERIFIED);
     }
