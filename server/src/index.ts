@@ -10,10 +10,10 @@ import logger from 'morgan';
 import "reflect-metadata"; // for typeorm
 import { DataSource } from "typeorm"
 
-import { getApolloServer, getApolloExpressMiddleware } from 'src/infra/apollo';
-import { getSessionConfig } from 'src/infra/redisSession';
-import { getDataSource } from 'src/infra/rdb'
-import { Mailer, getMailer } from "src/infra/mail";
+import { getApolloServer, getApolloExpressMiddleware } from 'src/infra/apollo.js';
+import { getSessionConfig } from 'src/infra/redisSession.js';
+import { getDataSource } from 'src/infra/rdb.js'
+import { Mailer, getMailer } from "src/infra/mail.js";
 
 type ExpressContext = {
   rdbSource: DataSource;

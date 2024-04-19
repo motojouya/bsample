@@ -1,7 +1,7 @@
 import { EntityManager, DataSource, Raw } from 'typeorm';
-import { User } from 'src/entity/user';
-import { UserEmail } from 'src/entity/userEmail';
-import { transact, RecordNotFoundError } from 'src/infra/rdb'
+import { User } from 'src/entity/user.js';
+import { UserEmail } from 'src/entity/userEmail.js';
+import { transact, RecordNotFoundError } from 'src/infra/rdb.js';
 
 export type VerifyEmail = (
   rdbSource: DataSource,

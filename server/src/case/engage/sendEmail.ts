@@ -1,8 +1,8 @@
 import { EntityManager, DataSource, Raw } from 'typeorm';
-import { User } from 'src/entity/user';
-import { UserEmail } from 'src/entity/userEmail';
-import { transact, RecordAlreadyExistError } from 'src/infra/rdb'
-import { Mailer, MailSendError } from 'src/infra/mail';
+import { User } from 'src/entity/user.js';
+import { UserEmail } from 'src/entity/userEmail.js';
+import { transact, RecordAlreadyExistError } from 'src/infra/rdb.js';
+import { Mailer, MailSendError } from 'src/infra/mail.js';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);

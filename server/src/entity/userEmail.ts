@@ -6,7 +6,7 @@ import {
   JoinColumn,
   Relation,
 } from "typeorm"
-import { User } from "src/entity/user";
+import { User } from "src/entity/user.js";
 
 @Entity()
 export class UserEmail {
@@ -30,12 +30,5 @@ export class UserEmail {
 
   @ManyToOne(type => User, user => user.userEmails)
   @JoinColumn({ referencedColumnName: "user_id" })
-  user: User
-
-  // verified: boolean
-  // TODO verifiedはresolverで算出されるべき値なのでundefinedでいいはずだが、型としてPartialになってないので、以下のように変更を加えてる
-  // see src/generated/graphql/resolver.ts
-  // export type ResolverTypeWrapper<T> = Promise<T> | T;
-  // ↓
-  // export type ResolverTypeWrapper<T> = Promise<Partial<T>> | Partial<T>;
+  user: Relation<User>
 }

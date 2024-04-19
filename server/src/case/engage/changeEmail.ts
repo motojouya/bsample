@@ -1,7 +1,7 @@
 import { Repository, DataSource, Not, IsNull } from 'typeorm';
-import { User } from 'src/entity/user';
-import { UserEmail } from 'src/entity/userEmail';
-import { transact, RecordNotFoundError } from 'src/infra/rdb'
+import { User } from 'src/entity/user.js';
+import { UserEmail } from 'src/entity/userEmail.js';
+import { transact, RecordNotFoundError } from 'src/infra/rdb.js'
 
 export type ChangeEmail = (rdbSource: DataSource, loginUser: User, email: string) => Promise<User | RecordNotFoundError>;
 export const changeEmail: ChangeEmail = async (rdbSource, loginUser, email) => {

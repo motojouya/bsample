@@ -1,6 +1,6 @@
-import { User } from 'src/entity/user';
-import { UserEmail } from 'src/entity/userEmail';
-import { UserPassword } from 'src/entity/userPassword';
+import { User } from 'src/entity/user.js';
+import { UserEmail } from 'src/entity/userEmail.js';
+import { UserPassword } from 'src/entity/userPassword.js';
 
 export default {
   User,

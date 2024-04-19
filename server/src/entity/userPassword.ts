@@ -6,7 +6,7 @@ import {
   JoinColumn,
   Relation,
 } from "typeorm"
-import { User } from "src/entity/user";
+import { User } from "src/entity/user.js";
 
 @Entity()
 export class UserPassword {
@@ -24,5 +24,5 @@ export class UserPassword {
 
   @OneToOne(type => User, user => user.password)
   @JoinColumn({ referencedColumnName: "user_id" })
-  user: User
+  user: Relation<User>
 }

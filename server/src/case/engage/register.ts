@@ -3,10 +3,10 @@ import {
   Not,
   IsNull
 } from 'typeorm';
-import { User } from 'src/entity/user';
-import { UserEmail } from 'src/entity/userEmail';
-import { UserPassword } from 'src/entity/userPassword';
-import { transact, RecordNotFoundError } from 'src/infra/rdb'
+import { User } from 'src/entity/user.js';
+import { UserEmail } from 'src/entity/userEmail.js';
+import { UserPassword } from 'src/entity/userPassword.js';
+import { transact, RecordNotFoundError } from 'src/infra/rdb.js'
 
 export type Register = (
   rdbSource: DataSource,

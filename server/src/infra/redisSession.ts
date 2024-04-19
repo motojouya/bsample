@@ -2,7 +2,7 @@ import session from 'express-session';
 import RedisStore from 'connect-redis';
 import Redis from 'ioredis';
 
-import { User } from 'src/entity/user';
+import { User } from 'src/entity/user.js';
 
 declare module 'express-session' {
   export interface SessionData {

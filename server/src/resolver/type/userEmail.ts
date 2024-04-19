@@ -1,5 +1,5 @@
-import { EmailResolvers } from 'src/generated/graphql/resolver';
-import { getEmail } from "src/case/engage/user";
+import { EmailResolvers } from 'src/generated/graphql/resolver.js';
+import { getEmail } from "src/case/engage/user.js";
 
 const verified = async (parent, args, contextValue, info) => {
   const { verified, verified_date } = parent;

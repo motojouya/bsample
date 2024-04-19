@@ -1,5 +1,5 @@
-import { User } from 'src/resolver/type/user';
-import { Email } from 'src/resolver/type/userEmail';
+import { User } from 'src/resolver/type/user.js';
+import { Email } from 'src/resolver/type/userEmail.js';
 
 export const types = {
   User,

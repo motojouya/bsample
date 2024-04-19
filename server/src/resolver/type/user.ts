@@ -1,5 +1,5 @@
-import { UserResolvers } from 'src/generated/graphql/resolver';
-import { getEmail } from "src/case/engage/user";
+import { UserResolvers } from 'src/generated/graphql/resolver.js';
+import { getEmail } from "src/case/engage/user.js";
 
 const identifier = (parent, args, contextValue, info) => parent.identifier;
 

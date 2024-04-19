@@ -1,8 +1,8 @@
 import { Repository, DataSource } from 'typeorm';
-import { User } from 'src/entity/user';
-import { UserEmail } from 'src/entity/userEmail';
-import { UserPassword } from 'src/entity/userPassword';
-import { transact } from 'src/infra/rdb'
+import { User } from 'src/entity/user.js';
+import { UserEmail } from 'src/entity/userEmail.js';
+import { UserPassword } from 'src/entity/userPassword.js';
+import { transact } from 'src/infra/rdb.js';
 
 export type ChangePassword = (rdbSource: DataSource, loginUser: User, password: string) => Promise<User>;
 export const changePassword: ChangePassword = async (rdbSource, loginUser, password) => {

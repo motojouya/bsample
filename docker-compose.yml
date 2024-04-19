@@ -66,6 +66,7 @@ services:
       POSTGRES_USER: bsample
       POSTGRES_PASSWORD: bsample
       POSTGRES_DB: bsample
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - rdb:/var/lib/postgresql/data
     # ports:
