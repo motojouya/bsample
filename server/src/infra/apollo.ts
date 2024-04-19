@@ -15,12 +15,14 @@ import { DataSource } from "typeorm"
 import { resolvers } from 'src/resolver/index.js';
 import { SessionData } from 'express-session';
 import { RequestWithContext } from 'src/index.js';
+import { Mailer } from 'src/infra/mail.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 interface ApolloContext {
   rdbSource: DataSource,
+  mailer: Mailer,
   session?: SessionData,
 }
 
@@ -46,6 +48,7 @@ export const getApolloServer = (httpServer) => {
 export const getApolloExpressMiddleware = (server) => expressMiddleware(server, {
   context: async ({ req }: { req: RequestWithContext }) => ({
     rdbSource: req.context.rdbSource,
+    mailer: req.context.mailer,
     session: req.session,
   }),
 });

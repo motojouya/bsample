@@ -40,7 +40,7 @@ const changeUserInformationMutation = gql`
 const fetcher = getFetcher();
 
 const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
-  const { data } = fether(changeUserInformationMutation, {
+  const { data } = fetcher(changeUserInformationMutation, {
     input: {
       name: formData.name,
     }

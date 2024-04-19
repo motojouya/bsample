@@ -18,6 +18,9 @@ services:
     links:
       - "server:server"
     # command: sh -c "npm run dev"
+    environment:
+      SERVER_HOST: server
+      SERVER_PORT: 3000
     ports:
       - "3000:3000"
   server:

@@ -17,18 +17,18 @@ export const metadata: Metadata = {
 };
 
 const loginUserQuery = gql`
-  query getLoginUser() {
-    loginUser() {
+  query getLoginUser {
+    loginUser {
       id
       name
-      email {
+      email_information {
         email
       }
     }
   }
 `;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -38,7 +38,8 @@ export default function RootLayout({
   //   name: 'motojouya',
   //   email: 'motojouya@example.com',
   // };
-  const user = fetcher(loginUserQuery, null);
+  const res = await fetcher(loginUserQuery, null);
+  const user = res.loginUser;
   return (
     <html lang="en">
       <body className={inter.className}>

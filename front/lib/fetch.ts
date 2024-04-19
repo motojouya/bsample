@@ -10,9 +10,9 @@ export const getFetcher = () => {
 
   let client = null;
   if (serverHost && serverPort) {
-    client = new GraphQLClient(`http://${serverHost}:${serverPort}/api/graphql/`);
+    client = new GraphQLClient(`http://${serverHost}:${serverPort}/graphql`);
   } else {
-    client = new GraphQLClient(`/api/graphql/`);
+    client = new GraphQLClient(`/api/graphql`);
   }
 
   const fetcher: Fetcher = (query, variables) => client.request(query, variables);

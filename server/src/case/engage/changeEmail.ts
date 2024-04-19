@@ -6,7 +6,7 @@ import { transact, RecordNotFoundError } from 'src/infra/rdb.js'
 export type ChangeEmail = (rdbSource: DataSource, loginUser: User, email: string) => Promise<User | RecordNotFoundError>;
 export const changeEmail: ChangeEmail = async (rdbSource, loginUser, email) => {
   return transact(rdbSource, async (manager) => {
-    const userEmail = manager.findOne(UserEmail, {
+    const userEmail = await manager.findOne(UserEmail, {
       where: {
         user_id: loginUser.user_id,
         email: email,

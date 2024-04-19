@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -85,7 +86,7 @@ const fetcher = getFetcher();
 
 // TODO registerSessionId をうまく渡せるかな
 const verifyEmail = (registerSessionId, toast) => (email: string, email_pin: string) => {
-  const { data } = fether(verifyEmailMutation, {
+  const { data } = fetcher(verifyEmailMutation, {
     input: {
       register_session_id: registerSessionId,
       email,
@@ -110,10 +111,8 @@ const verifyEmail = (registerSessionId, toast) => (email: string, email_pin: str
 };
 
 const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
-  const { data } = fether(sendEmailMutation, {
-    input: {
-      email: email,
-    }
+  const { data } = fetcher(sendEmailMutation, {
+    email: email,
   });
 
   if (data.register_session_id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
@@ -134,7 +133,7 @@ const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
 };
 
 const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
-  const { data } = fether(registerMutation, {
+  const { data } = fetcher(registerMutation, {
     input: {
       register_session_id: formData.register_session_id,
       name: formData.name,

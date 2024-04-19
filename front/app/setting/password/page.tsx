@@ -39,7 +39,7 @@ const changePasswordMutation = gql`
 const fetcher = getFetcher();
 
 const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
-  const { data } = fether(changePasswordMutation, {
+  const { data } = fetcher(changePasswordMutation, {
     input: {
       password: formData.password,
     }

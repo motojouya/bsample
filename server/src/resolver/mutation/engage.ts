@@ -10,7 +10,7 @@ export class AuthenticationError extends Error {
 const sendEmail = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const mailer = contextValue.mailer;
-  const { email } = args;
+  const { input: { email } } = args;
   const loginUser = contextValue.session.loginUser;
 
   return await engage.sendEmail(rdbSource, mailer, loginUser, email);
@@ -19,9 +19,11 @@ const sendEmail = async (parent, args, contextValue, info) => {
 const verifyEmail = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
-    register_session_id,
-    email,
-    email_pin,
+    input: {
+      register_session_id,
+      email,
+      email_pin,
+    }
   } = args;
   const loginUser = contextValue.session.loginUser;
 
@@ -35,10 +37,12 @@ const verifyEmail = async (parent, args, contextValue, info) => {
 const register = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
-    register_session_id,
-    name,
-    email,
-    password,
+    input: {
+      register_session_id,
+      name,
+      email,
+      password,
+    }
   } = args;
 
   return await engage.register(rdbSource, register_session_id, name, email, password);
@@ -46,7 +50,7 @@ const register = async (parent, args, contextValue, info) => {
 
 const login = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
-  const { email, password } = args;
+  const { input: { email, password } } = args;
   const user = await engage.login(rdbSource, email, password);
 
   if (!user) {
@@ -59,7 +63,7 @@ const login = async (parent, args, contextValue, info) => {
 
 const changeUserInformation = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
-  const { name } = args;
+  const { input: { name } } = args;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return new AuthenticationError(null, 'who are you!?');
@@ -69,7 +73,7 @@ const changeUserInformation = async (parent, args, contextValue, info) => {
 
 const changePassword = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
-  const { password } = args;
+  const { input: { password } } = args;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return new AuthenticationError(null, 'who are you!?');
@@ -79,7 +83,7 @@ const changePassword = async (parent, args, contextValue, info) => {
 
 const changeEmail = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
-  const { email } = args;
+  const { input: { email } } = args;
   const loginUser = contextValue.session.loginUser;
   if (!loginUser) {
     return new AuthenticationError(null, 'who are you!?');

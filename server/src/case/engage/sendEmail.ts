@@ -16,7 +16,7 @@ export type AnonymousUser = {
 export type SendEmail = (rdbSource: DataSource, mailer: Mailer, loginUser: User | null, email: string) => Promise<AnonymousUser | RecordAlreadyExistError | MailSendError>;
 export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) => {
   return await transact(rdbSource, async (manager) => {
-    const duplicatedEmail = getDuplicatedEmail(manager, email);
+    const duplicatedEmail = await getDuplicatedEmail(manager, email);
     if (duplicatedEmail) {
       return new RecordAlreadyExistError('user_email', duplicatedEmail, 'email exists already!');
     }
@@ -63,16 +63,24 @@ export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) 
 //   from user_email as ue
 //  inner join user as u
 //          on ue.user_id = u.user_id
-//  where ue.email <> u.email
-//    and ue.assign_expired_date > now()
+//  where (ue.email = ${email} and ue.assign_expired_date > now())
+//     or (ue.email = ${email} and u.email = ${email})
 //      ;
 type GetDuplicatedEmail = (manager: EntityManager, email: string) => Promise<UserEmail | null>
 const getDuplicatedEmail: GetDuplicatedEmail = async (manager, email) => {
   return await manager.findOne(UserEmail, {
     relations: [ 'user' ],
-    where: {
-      email: Raw((alias) => `${alias} > user.email`),
-      assign_expired_date: Raw((alias) => `${alias} > NOW()`),
-    }
+    where: [
+      {
+        email: email,
+        assign_expired_date: Raw((alias) => `${alias} > NOW()`),
+      },
+      {
+        email: email,
+        user: {
+          email: email,
+        }
+      },
+    ]
   });
 };

@@ -60,6 +60,8 @@ export async function transact<T>(source: DataSource, callback: ((manager: Entit
   const queryRunner = source.createQueryRunner();
   await queryRunner.connect();
 
+  await queryRunner.startTransaction();
+
   const result = await callback(queryRunner.manager);
 
   if (result instanceof Error) {

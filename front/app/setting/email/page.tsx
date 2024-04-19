@@ -72,7 +72,7 @@ const verifyEmailMutation = gql`
 const fetcher = getFetcher();
 
 const sendEmail = (toast) => (email: string) => {
-  const { data } = fether(sendEmailMutation, {
+  const { data } = fetcher(sendEmailMutation, {
     input: {
       email: email,
     }
@@ -95,7 +95,7 @@ const sendEmail = (toast) => (email: string) => {
 };
 
 const verifyEmail = (toast) => (email: string, email_pin: number) => {
-  const { data } = fether(verifyEmailMutation, {
+  const { data } = fetcher(verifyEmailMutation, {
     input: {
       register_session_id: null,
       email,
@@ -120,7 +120,7 @@ const verifyEmail = (toast) => (email: string, email_pin: number) => {
 };
 
 const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
-  const { data } = fether(changeEmailMutation, {
+  const { data } = fetcher(changeEmailMutation, {
     input: {
       email: formData.email,
     }
