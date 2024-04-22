@@ -2,7 +2,7 @@ input SendEmailInput {
   email: String!
 }
 
-union SendEmailReturn = AnonymousUser | RecordAlreadyExistError | MailSendError
+union SendEmailReturn = User | AnonymousUser | RecordAlreadyExistError | MailSendError
 
 input VerifyEmailInput {
   register_session_id: Int

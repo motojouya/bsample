@@ -45,10 +45,21 @@ const changeEmailMutation = gql`
 const sendEmailMutation = gql`
   mutation SendEmailLogined($email: String!) {
     sendEmail(input: { email: $email }) {
+      ... on User {
+        id
+        name
+        email_information {
+          email
+        }
+      }
       ... on AnonymousUser {
+        register_session_id
         email
       }
       ... on RecordAlreadyExistError {
+        message
+      }
+      ... on MailSendError {
         message
       }
     }

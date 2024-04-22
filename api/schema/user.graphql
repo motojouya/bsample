@@ -31,6 +31,6 @@ type Email {
 }
 
 type AnonymousUser {
-  register_session_id: Int
+  register_session_id: Int!
   email: String!
 }

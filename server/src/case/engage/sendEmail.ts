@@ -51,10 +51,14 @@ export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) 
       return error;
     }
 
-    return {
-      register_session_id: registerSessionId,
-      email: email,
-    };
+    if (registerSessionId) {
+      return {
+        register_session_id: registerSessionId,
+        email: email,
+      };
+    } else {
+      return user;
+    }
   });
 };
 
