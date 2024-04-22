@@ -82,14 +82,14 @@ const verifyEmailMutation = gql`
 
 const fetcher = getFetcher();
 
-const sendEmail = (toast) => (email: string) => {
-  const { data } = fetcher(sendEmailMutation, {
+const sendEmail = (toast) => async (email: string) => {
+  const res = await fetcher(sendEmailMutation, {
     input: {
       email: email,
     }
   });
 
-  if (data.email) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.sendEmail && res.sendEmail.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
     return true;
 
   } else {
@@ -97,7 +97,7 @@ const sendEmail = (toast) => (email: string) => {
       title: "You submitted the following values:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
     });
@@ -105,8 +105,8 @@ const sendEmail = (toast) => (email: string) => {
   }
 };
 
-const verifyEmail = (toast) => (email: string, email_pin: number) => {
-  const { data } = fetcher(verifyEmailMutation, {
+const verifyEmail = (toast) => async (email: string, email_pin: number) => {
+  const res = await fetcher(verifyEmailMutation, {
     input: {
       register_session_id: null,
       email,
@@ -114,7 +114,7 @@ const verifyEmail = (toast) => (email: string, email_pin: number) => {
     }
   });
 
-  if (data.verified) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.verifyEmail && res.verifyEmail.verified) { // TODO errorの場合error objectが返ってくる。type guardしたいが
     return true;
 
   } else {
@@ -122,7 +122,7 @@ const verifyEmail = (toast) => (email: string, email_pin: number) => {
       title: "You submitted the following values:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
     });
@@ -130,14 +130,14 @@ const verifyEmail = (toast) => (email: string, email_pin: number) => {
   }
 };
 
-const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
-  const { data } = fetcher(changeEmailMutation, {
+const onSubmit = (router, toast) => async (formData: z.infer<typeof FormSchema>) => {
+  const res = await fetcher(changeEmailMutation, {
     input: {
       email: formData.email,
     }
   });
 
-  if (data.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.changeEmail && res.changeEmail.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
     router.reload(); // TODO server componentをreloadしてくれないとlogin userが取得できないが大丈夫？
 
   } else {
@@ -145,7 +145,7 @@ const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
       title: "You submitted the following values:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
     });

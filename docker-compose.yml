@@ -21,6 +21,7 @@ services:
     environment:
       SERVER_HOST: server
       SERVER_PORT: 3000
+      TZ: Asia/Tokyo
     ports:
       - "3000:3000"
   server:
@@ -56,6 +57,7 @@ services:
       MAIL_HOST: "mail"
       MAIL_PORT: 1025
       MAIL_FROM: motojouya@example.com
+      TZ: Asia/Tokyo
   rdb:
     build:
       context: "./rdb"

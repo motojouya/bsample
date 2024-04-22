@@ -8,7 +8,7 @@ import { User } from 'src/entity/user.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 import { RecordNotFoundError, RecordAlreadyExistError } from 'src/infra/rdb.js'
 import { MailSendError } from 'src/infra/mail.js'
-import { AnonymousUser } from 'src/case/engage/sendEmail.js'
+import { AnonymousUser, isAnonymousUser } from 'src/case/engage/sendEmail.js'
 
 export const SendEmailReturn: SendEmailReturnResolvers = {
   __resolveType(obj, contextValue, info){
@@ -21,7 +21,7 @@ export const SendEmailReturn: SendEmailReturnResolvers = {
     if (obj instanceof User) {
       return 'User';
     }
-    if (obj instanceof MailSendError) {
+    if (isAnonymousUser(obj)) {
       return 'AnonymousUser';
     }
     return null;

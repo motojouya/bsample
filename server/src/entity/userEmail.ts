@@ -10,25 +10,31 @@ import { User } from "src/entity/user.js";
 
 @Entity()
 export class UserEmail {
+
   @PrimaryColumn()
   user_id: number
 
-  @PrimaryColumn()
+  @PrimaryColumn({
+    length: 128,
+  })
   email: string
 
   @Column()
   email_pin: number
 
-  @Column()
+  @Column({ default: () => "now()" })
   created_date: Date
 
-  @Column()
+  @Column({ nullable: true })
   verified_date: Date
 
   @Column()
   assign_expired_date: Date
 
   @ManyToOne(type => User, user => user.userEmails)
-  @JoinColumn({ referencedColumnName: "user_id" })
+  @JoinColumn({
+    name: "user_id",
+    referencedColumnName: "user_id",
+  })
   user: Relation<User>
 }

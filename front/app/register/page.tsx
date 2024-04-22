@@ -95,16 +95,14 @@ const verifyEmailMutation = gql`
 const fetcher = getFetcher();
 
 // TODO registerSessionId をうまく渡せるかな
-const verifyEmail = (registerSessionId, toast) => (email: string, email_pin: string) => {
-  const { data } = fetcher(verifyEmailMutation, {
-    input: {
-      register_session_id: registerSessionId,
-      email,
-      email_pin,
-    }
+const verifyEmail = (registerSessionId: number, toast) => async (email: string, emailPin: number) => {
+  const res = await fetcher(verifyEmailMutation, {
+    registerSessionId,
+    email,
+    emailPin,
   });
 
-  if (data.verified) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.verifyEmail && res.verifyEmail.verified) { // TODO errorの場合error objectが返ってくる。type guardしたいが
     return true;
 
   } else {
@@ -112,7 +110,7 @@ const verifyEmail = (registerSessionId, toast) => (email: string, email_pin: str
       title: "You submitted the following values:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
     });
@@ -120,13 +118,13 @@ const verifyEmail = (registerSessionId, toast) => (email: string, email_pin: str
   }
 };
 
-const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
-  const { data } = fetcher(sendEmailMutation, {
+const sendEmail = (setRegisterSessionId, toast) => async (email: string) => {
+  const res = await fetcher(sendEmailMutation, {
     email: email,
   });
 
-  if (data.register_session_id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
-    setRegisterSessionId(parseInt(data.register_session_id));
+  if (res.sendEmail && res.sendEmail.register_session_id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+    setRegisterSessionId(parseInt(res.sendEmail.register_session_id));
     return true;
 
   } else {
@@ -134,7 +132,7 @@ const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
       title: "You submitted the following values:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
     });
@@ -142,17 +140,15 @@ const sendEmail = (setRegisterSessionId, toast) => (email: string) => {
   }
 };
 
-const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
-  const { data } = fetcher(registerMutation, {
-    input: {
-      register_session_id: formData.register_session_id,
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-    }
+const onSubmit = (registerSessionId, router, toast) => async (formData: z.infer<typeof FormSchema>) => {
+  const res = await fetcher(registerMutation, {
+    registerSessionId: registerSessionId,
+    name: formData.user_name,
+    email: formData.email,
+    password: formData.password,
   });
 
-  if (data.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.register && res.register.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
     router.push('/'); // TODO server componentをreloadしてくれないとlogin userが取得できないが大丈夫？
 
   } else {
@@ -160,7 +156,7 @@ const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
       title: "You submitted the following values:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
     });
@@ -185,11 +181,10 @@ export default function Register() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex w-full max-w-sm items-center space-x-2">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit(router, toast))} className="w-2/3 space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit(registerSessionId, router, toast))} className="w-2/3 space-y-6">
             <UserNameInputForm form={form} />
             <EmailInputForm 
               form={form}
-              registerSessionId={registerSessionId}
               verifyEmail={verifyEmail(registerSessionId, toast)}
               sendEmail={sendEmail(setRegisterSessionId, toast)}
             />

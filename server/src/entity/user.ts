@@ -11,28 +11,38 @@ import { UserPassword } from "src/entity/userPassword.js";
 
 @Entity()
 export class User {
+
   @PrimaryGeneratedColumn()
   user_id: number
 
-  @Column()
+  @Column({
+    length: 128,
+    unique: true,
+  })
   identifier: string
 
-  @Column()
+  @Column({
+    length: 128,
+    nullable: true,
+  })
   name: string
 
   @Column()
   register_session_id: number
 
-  @Column()
+  @Column({
+    length: 128,
+    nullable: true,
+  })
   email: string
 
   @Column()
   active: boolean
 
-  @Column()
+  @Column({ default: () => "now()" })
   created_date: Date
 
-  @Column()
+  @Column({ default: () => "now()" })
   updated_date: Date
 
   @OneToMany(type => UserEmail, userEmail => userEmail.user)

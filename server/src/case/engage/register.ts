@@ -44,12 +44,14 @@ export const register: Register = async (rdbSource, register_session_id, name, e
       identifier: email,
       name: name,
       email: email,
+      active: true,
     });
 
-    await manager.create(UserPassword, {
+    const userPassword = manager.create(UserPassword, {
       user_id: user.user_id,
       password: password,
     });
+    await manager.save(userPassword);
 
     return await manager.findOne(User, {
       where: {

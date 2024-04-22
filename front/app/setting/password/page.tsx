@@ -38,14 +38,14 @@ const changePasswordMutation = gql`
 
 const fetcher = getFetcher();
 
-const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
-  const { data } = fetcher(changePasswordMutation, {
+const onSubmit = (router, toast) => async (formData: z.infer<typeof FormSchema>) => {
+  const res = await fetcher(changePasswordMutation, {
     input: {
       password: formData.password,
     }
   });
 
-  if (data.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.changePassword && res.changePassword.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
     router.reload(); // TODO server componentをreloadしてくれないとlogin userが取得できないが大丈夫？
 
   } else {
@@ -53,7 +53,7 @@ const onSubmit = (router, toast) => (formData: z.infer<typeof FormSchema>) => {
       title: "You submitted the following values:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
     });

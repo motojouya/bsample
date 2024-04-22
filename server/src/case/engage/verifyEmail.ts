@@ -9,7 +9,7 @@ export type VerifyEmail = (
   register_session_id: number,
   email: string,
   email_pin: number
-) => Promise<null | RecordNotFoundError>;
+) => Promise<UserEmail | RecordNotFoundError>;
 export const verifyEmail: VerifyEmail = async (rdbSource, loginUser, registerSessionId, email, emailPin) => {
   return await transact(rdbSource, async (manager) => {
     const userEmail = await getUserEmail(manager, loginUser, email, emailPin, registerSessionId);
@@ -24,7 +24,12 @@ export const verifyEmail: VerifyEmail = async (rdbSource, loginUser, registerSes
       verified_date: new Date(),
     });
 
-    return null;
+    return manager.findOne(UserEmail, {
+      where: {
+        user_id: userEmail.user_id,
+        email: userEmail.email,
+      }
+    });
   });
 }
 

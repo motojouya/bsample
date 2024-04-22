@@ -3,15 +3,21 @@ import { User } from 'src/entity/user.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 import { transact, RecordAlreadyExistError } from 'src/infra/rdb.js';
 import { Mailer, MailSendError } from 'src/infra/mail.js';
+import { addHours } from "date-fns";
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
 export type AnonymousUser = {
-  register_session_id: number | null,
+  register_session_id: number,
   email: string,
 };
+
+// TODO 引数anyでいいんだっけ
+export function isAnonymousUser(anonymousUser: any): anonymousUser is AnonymousUser {
+  return "register_session_id" in anonymousUser && "email" in anonymousUser;
+}
 
 export type SendEmail = (rdbSource: DataSource, mailer: Mailer, loginUser: User | null, email: string) => Promise<AnonymousUser | RecordAlreadyExistError | MailSendError>;
 export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) => {
@@ -25,26 +31,27 @@ export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) 
     let user = loginUser;
     if (!user) {
       registerSessionId = getRandomInt(10000); // TODO UID
-      user = await manager.create(User, {
-        identifier: null,
+      user = manager.create(User, {
+        identifier: registerSessionId.toString(),
         name: null,
         register_session_id: registerSessionId,
         email: null,
         active: false,
       });
+      await manager.save(user);
     }
 
     const email_pin = getRandomInt(999999);
-    const assignExpiredDate = new Date();
-    assignExpiredDate.setHours(assignExpiredDate.getHours() + 1);
+    const assignExpiredDate = addHours(new Date(), 1);
 
-    await manager.create(UserEmail, {
+    const useremail = manager.create(UserEmail, {
       user_id: user.user_id,
       email: email,
       email_pin: email_pin,
       verified_date: null,
       assign_expired_date: assignExpiredDate,
     });
+    await manager.save(useremail);
 
     const error = await mailer.send(email, `PINコードの送付 PIN:${email_pin}`, "PINコードを送付します");
     if (error) {

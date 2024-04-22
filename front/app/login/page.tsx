@@ -79,14 +79,14 @@ export default function Home() {
 
 const onSubmit = (router, toast) => async (formData: z.infer<typeof FormSchema>) => {
 
-  const { data } = await fetcher(query, {
+  const res = await fetcher(query, {
     input: {
       id: formData.user_id,
       password: formData.password,
     }
   });
 
-  if (data) {
+  if (res.login) {
     router.push('/'); // TODO server componentをreloadしてくれないとlogin userが取得できないが大丈夫？
 
   } else {
@@ -94,7 +94,7 @@ const onSubmit = (router, toast) => async (formData: z.infer<typeof FormSchema>)
       title: "login failed!",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(res, null, 2)}</code>
         </pre>
       ),
     });

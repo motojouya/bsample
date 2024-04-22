@@ -53,20 +53,20 @@ const emailSend = (getValues, setValue, sendEmail) => async () => {
   }
 };
 
-const emailPinOnChange = (field, getValues, setValue, registerSessionId, verifyEmail) => async (e) => {
+const emailPinOnChange = (field, getValues, setValue, verifyEmail) => async (e) => {
   const pinNumber = e.target.value;
 
   field.onChange(e);
-  if (pinNumber && pinNumber.length === 4) {
+  if (pinNumber && pinNumber.length === 6) {
     const email = getValues('email');
-    const result = await verifyEmail(registerSessionId, email, parseInt(pinNumber));
+    const result = await verifyEmail(email, parseInt(pinNumber));
     if (result) {
       setValue('email_status', EMAIL_VERIFICATION_VERIFIED);
     }
   }
 };
 
-export const EmailInputForm = ({ form, registerSessionId, sendEmail, verifyEmail }) => {
+export const EmailInputForm = ({ form, sendEmail, verifyEmail }) => {
 
   const emailStatus = form.getValues('email_status');
   return (
@@ -99,7 +99,7 @@ export const EmailInputForm = ({ form, registerSessionId, sendEmail, verifyEmail
                   {...field}
                   type="password"
                   placeholder="pin number"
-                  onChange={emailPinOnChange(field, form.getValues, form.setValue, registerSessionId, verifyEmail)}
+                  onChange={emailPinOnChange(field, form.getValues, form.setValue, verifyEmail)}
                 />
               </FormControl>
               <FormMessage />
