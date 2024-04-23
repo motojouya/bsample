@@ -1,6 +1,6 @@
 import engage from 'src/case/engage/index.js';
 import { MutationResolvers, ResolversParentTypes } from 'src/generated/graphql/resolver.js';
-import { ApolloContext } from  'src/infra/apollo.js'
+import { ApolloContext } from 'src/infra/apollo.js';
 
 export class AuthenticationError extends Error {
   constructor(
@@ -11,7 +11,12 @@ export class AuthenticationError extends Error {
   }
 }
 
-const sendEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['sendEmail'] = async (parent, args, contextValue, info) => {
+const sendEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['sendEmail'] = async (
+  parent,
+  args,
+  contextValue,
+  info,
+) => {
   const rdbSource = contextValue.rdbSource;
   const mailer = contextValue.mailer;
   const {
@@ -22,7 +27,12 @@ const sendEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation
   return await engage.sendEmail(rdbSource, mailer, loginUser, email);
 };
 
-const verifyEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['verifyEmail'] = async (parent, args, contextValue, info) => {
+const verifyEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['verifyEmail'] = async (
+  parent,
+  args,
+  contextValue,
+  info,
+) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { register_session_id, email, email_pin },
@@ -36,7 +46,12 @@ const verifyEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutati
   return await engage.verifyEmail(rdbSource, loginUser, register_session_id, email, email_pin);
 };
 
-const register: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['register'] = async (parent, args, contextValue, info) => {
+const register: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['register'] = async (
+  parent,
+  args,
+  contextValue,
+  info,
+) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { register_session_id, name, email, password },
@@ -45,7 +60,12 @@ const register: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation'
   return await engage.register(rdbSource, register_session_id, name, email, password);
 };
 
-const login: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['login'] = async (parent, args, contextValue, info) => {
+const login: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['login'] = async (
+  parent,
+  args,
+  contextValue,
+  info,
+) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { id, password },
@@ -60,7 +80,10 @@ const login: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>[
   return user;
 };
 
-const changeUserInformation: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['changeUserInformation'] = async (parent, args, contextValue, info) => {
+const changeUserInformation: MutationResolvers<
+  ApolloContext,
+  ResolversParentTypes['Mutation']
+>['changeUserInformation'] = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { name },
@@ -72,7 +95,12 @@ const changeUserInformation: MutationResolvers<ApolloContext, ResolversParentTyp
   return await engage.changeUserInformation(rdbSource, loginUser, name);
 };
 
-const changePassword: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['changePassword'] = async (parent, args, contextValue, info) => {
+const changePassword: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['changePassword'] = async (
+  parent,
+  args,
+  contextValue,
+  info,
+) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { password },
@@ -84,7 +112,12 @@ const changePassword: MutationResolvers<ApolloContext, ResolversParentTypes['Mut
   return await engage.changePassword(rdbSource, loginUser, password);
 };
 
-const changeEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['changeEmail'] = async (parent, args, contextValue, info) => {
+const changeEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['changeEmail'] = async (
+  parent,
+  args,
+  contextValue,
+  info,
+) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { email },

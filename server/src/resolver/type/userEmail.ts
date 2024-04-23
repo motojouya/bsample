@@ -1,11 +1,8 @@
 import { EmailResolvers, ResolversParentTypes } from 'src/generated/graphql/resolver.js';
-import { ApolloContext } from  'src/infra/apollo.js'
+import { ApolloContext } from 'src/infra/apollo.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 
-type VerifiedResolver = EmailResolvers<
-  ApolloContext,
-  ResolversParentTypes['Email'] & Partial<UserEmail>
->['verified'];
+type VerifiedResolver = EmailResolvers<ApolloContext, ResolversParentTypes['Email'] & Partial<UserEmail>>['verified'];
 const verified: VerifiedResolver = (parent, args, contextValue, info) => {
   const { verified, verified_date } = parent;
   if (verified === true || verified === false) {

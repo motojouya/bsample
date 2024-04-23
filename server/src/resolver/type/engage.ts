@@ -10,7 +10,7 @@ import { UserEmail } from 'src/entity/userEmail.js';
 import { RecordNotFoundError, RecordAlreadyExistError } from 'src/infra/rdb.js';
 import { MailSendError } from 'src/infra/mail.js';
 import { isAnonymousUser } from 'src/case/engage/sendEmail.js';
-import { ApolloContext } from  'src/infra/apollo.js'
+import { ApolloContext } from 'src/infra/apollo.js';
 
 export const SendEmailReturn: SendEmailReturnResolvers<ApolloContext, ResolversParentTypes['SendEmailReturn']> = {
   __resolveType(obj, contextValue, info) {

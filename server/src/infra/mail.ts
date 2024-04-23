@@ -52,7 +52,6 @@ export const getMailer: GetMailer = () => {
       const sendResult = await transporter.sendMail(mailContents);
       console.log('send result.', sendResult);
       return null;
-
     } catch (e: unknown) {
       console.log('send failed.', e);
       if (e instanceof Error) {

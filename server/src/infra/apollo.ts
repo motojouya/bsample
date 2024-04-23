@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import * as http from "http";
+import * as http from 'http';
 
 // import { readFileSync } from 'fs';
 
@@ -54,8 +54,9 @@ const getContext: ContextFunction<[{ req: RequestWithContext }], ApolloContext> 
     rdbSource: req.context.rdbSource,
     mailer: req.context.mailer,
     session: req.session,
-  }
+  };
 };
 
 export type GetApolloExpressMiddleware = (apollo: ApolloServer<ApolloContext>) => express.RequestHandler;
-export const getApolloExpressMiddleware: GetApolloExpressMiddleware = apollo => expressMiddleware(apollo, { context: getContext, });
+export const getApolloExpressMiddleware: GetApolloExpressMiddleware = apollo =>
+  expressMiddleware(apollo, { context: getContext });
