@@ -1,15 +1,17 @@
 import engage from 'src/case/engage/index.js';
+import { MutationResolvers, ResolversParentTypes } from 'src/generated/graphql/resolver.js';
+import { ApolloContext } from  'src/infra/apollo.js'
 
 export class AuthenticationError extends Error {
   constructor(
-    readonly userKey: string,
+    readonly userKey: string | null,
     readonly message: string,
   ) {
     super();
   }
 }
 
-const sendEmail = async (parent, args, contextValue, info) => {
+const sendEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['sendEmail'] = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const mailer = contextValue.mailer;
   const {
@@ -20,7 +22,7 @@ const sendEmail = async (parent, args, contextValue, info) => {
   return await engage.sendEmail(rdbSource, mailer, loginUser, email);
 };
 
-const verifyEmail = async (parent, args, contextValue, info) => {
+const verifyEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['verifyEmail'] = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { register_session_id, email, email_pin },
@@ -28,13 +30,13 @@ const verifyEmail = async (parent, args, contextValue, info) => {
   const loginUser = contextValue.session.loginUser;
 
   if (!register_session_id && !loginUser) {
-    return new AuthenticationError(register_session_id, 'not authenticated');
+    return new AuthenticationError(null, 'not authenticated');
   }
 
   return await engage.verifyEmail(rdbSource, loginUser, register_session_id, email, email_pin);
 };
 
-const register = async (parent, args, contextValue, info) => {
+const register: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['register'] = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { register_session_id, name, email, password },
@@ -43,22 +45,22 @@ const register = async (parent, args, contextValue, info) => {
   return await engage.register(rdbSource, register_session_id, name, email, password);
 };
 
-const login = async (parent, args, contextValue, info) => {
+const login: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['login'] = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
-    input: { email, password },
+    input: { id, password },
   } = args;
-  const user = await engage.login(rdbSource, email, password);
+  const user = await engage.login(rdbSource, id, password);
 
   if (!user) {
-    return new AuthenticationError(email, 'who are you!?');
+    return new AuthenticationError(id, 'who are you!?');
   }
   contextValue.session.loginUser = user;
 
   return user;
 };
 
-const changeUserInformation = async (parent, args, contextValue, info) => {
+const changeUserInformation: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['changeUserInformation'] = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { name },
@@ -70,7 +72,7 @@ const changeUserInformation = async (parent, args, contextValue, info) => {
   return await engage.changeUserInformation(rdbSource, loginUser, name);
 };
 
-const changePassword = async (parent, args, contextValue, info) => {
+const changePassword: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['changePassword'] = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { password },
@@ -82,7 +84,7 @@ const changePassword = async (parent, args, contextValue, info) => {
   return await engage.changePassword(rdbSource, loginUser, password);
 };
 
-const changeEmail = async (parent, args, contextValue, info) => {
+const changeEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['changeEmail'] = async (parent, args, contextValue, info) => {
   const rdbSource = contextValue.rdbSource;
   const {
     input: { email },

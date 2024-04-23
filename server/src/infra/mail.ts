@@ -14,23 +14,25 @@ export type MailContents = {
 
 export class MailSendError extends Error {
   constructor(
-    readonly contents: MailContents,
     readonly exception: object,
+    readonly contents: MailContents,
     readonly message: string,
   ) {
     super();
   }
 }
 
-export const getMailer = async () => {
+export type GetMailer = () => Mailer;
+export const getMailer: GetMailer = () => {
   const defaultFrom = process.env.MAIL_FROM || '';
   const transporter = nodemailer.createTransport({
+    // @ts-expect-error: compileできない理由がわからないのでFIXME
     ignoreTLS: true,
     host: process.env.MAIL_HOST,
-    // auth: {
-    //   user: process.env.MAIL_USER,
-    //   pass: process.env.MAIL_PASSWORD,
-    // },
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASSWORD,
+    },
     port: process.env.MAIL_PORT, // 1025
     secure: false, // true for 465, false for other ports
     defaults: {
@@ -50,9 +52,15 @@ export const getMailer = async () => {
       const sendResult = await transporter.sendMail(mailContents);
       console.log('send result.', sendResult);
       return null;
-    } catch (e) {
+
+    } catch (e: unknown) {
       console.log('send failed.', e);
-      return new MailSendError(e, mailContents, 'failed send email');
+      if (e instanceof Error) {
+        return new MailSendError(e, mailContents, 'failed send email');
+      } else {
+        console.error('!error is not error!', e);
+        return null;
+      }
     }
   };
 

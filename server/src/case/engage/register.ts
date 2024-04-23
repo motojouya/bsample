@@ -10,7 +10,7 @@ export type Register = (
   name: string,
   email: string,
   password: string,
-) => Promise<User | RecordNotFoundError>;
+) => Promise<User | null | RecordNotFoundError>;
 export const register: Register = async (
   rdbSource,
   register_session_id,

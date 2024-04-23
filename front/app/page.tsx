@@ -19,7 +19,7 @@ export default function Home() {
   );
 }
 
-export function StoreCard() {
+function StoreCard() {
   return (
     <Card className="w-[350px]">
       <CardHeader>

@@ -4,7 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import { NextFunction, Request, Response } from 'express';
 
-import createError from 'http-errors';
+// import createError from 'http-errors';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import 'reflect-metadata'; // for typeorm
@@ -47,8 +47,8 @@ const run = async () => {
   app.use(sessionConfig);
 
   const rdbSource = await getDataSource();
-  const mailer = await getMailer();
-  app.use(async (req: RequestWithContext, res: Response, next: NextFunction) => {
+  const mailer = getMailer();
+  app.use((req: RequestWithContext, res: Response, next: NextFunction) => {
     req.context = {
       rdbSource,
       mailer,
@@ -79,4 +79,4 @@ const run = async () => {
   console.log(`🚀  Server ready`);
 };
 
-run();
+await run();

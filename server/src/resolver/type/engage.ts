@@ -3,14 +3,16 @@ import {
   VerifyEmailReturnResolvers,
   RegisterReturnResolvers,
   EmailChangeReturnResolvers,
+  ResolversParentTypes,
 } from 'src/generated/graphql/resolver.js';
 import { User } from 'src/entity/user.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 import { RecordNotFoundError, RecordAlreadyExistError } from 'src/infra/rdb.js';
 import { MailSendError } from 'src/infra/mail.js';
 import { isAnonymousUser } from 'src/case/engage/sendEmail.js';
+import { ApolloContext } from  'src/infra/apollo.js'
 
-export const SendEmailReturn: SendEmailReturnResolvers = {
+export const SendEmailReturn: SendEmailReturnResolvers<ApolloContext, ResolversParentTypes['SendEmailReturn']> = {
   __resolveType(obj, contextValue, info) {
     if (obj instanceof RecordAlreadyExistError) {
       return 'RecordAlreadyExistError';
@@ -28,7 +30,7 @@ export const SendEmailReturn: SendEmailReturnResolvers = {
   },
 };
 
-export const VerifyEmailReturn: VerifyEmailReturnResolvers = {
+export const VerifyEmailReturn: VerifyEmailReturnResolvers<ApolloContext, ResolversParentTypes['VerifyEmailReturn']> = {
   __resolveType(obj, contextValue, info) {
     if (obj instanceof RecordNotFoundError) {
       return 'RecordNotFoundError';
@@ -40,7 +42,7 @@ export const VerifyEmailReturn: VerifyEmailReturnResolvers = {
   },
 };
 
-export const RegisterReturn: RegisterReturnResolvers = {
+export const RegisterReturn: RegisterReturnResolvers<ApolloContext, ResolversParentTypes['RegisterReturn']> = {
   __resolveType(obj, contextValue, info) {
     if (obj instanceof RecordNotFoundError) {
       return 'RecordNotFoundError';
@@ -52,7 +54,7 @@ export const RegisterReturn: RegisterReturnResolvers = {
   },
 };
 
-export const EmailChangeReturn: EmailChangeReturnResolvers = {
+export const EmailChangeReturn: EmailChangeReturnResolvers<ApolloContext, ResolversParentTypes['EmailChangeReturn']> = {
   __resolveType(obj, contextValue, info) {
     if (obj instanceof RecordNotFoundError) {
       return 'RecordNotFoundError';

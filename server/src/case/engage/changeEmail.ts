@@ -7,7 +7,7 @@ export type ChangeEmail = (
   rdbSource: DataSource,
   loginUser: User,
   email: string,
-) => Promise<User | RecordNotFoundError>;
+) => Promise<User | null | RecordNotFoundError>;
 export const changeEmail: ChangeEmail = async (rdbSource, loginUser, email) => {
   return transact(rdbSource, async manager => {
     const userEmail = await manager.findOne(UserEmail, {
