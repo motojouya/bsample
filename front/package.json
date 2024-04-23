@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "codegen": "graphql-codegen --config graphql.config.ts"
+    "codegen": "graphql-codegen --config graphql.config.ts",
+    "prettier": "npx prettier --write '{app,components,lib}/**/*.{ts,tsx}'",
+    "prettier_check": "npx prettier --check '{app,components,lib}/**/*.{ts,tsx}'"
   },
   "license": "MIT",
   "dependencies": {

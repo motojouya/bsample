@@ -1,13 +1,15 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { useLoginUser } from "@/app/LoginUserProvider"
+import Link from 'next/link';
+import { useLoginUser } from '@/app/LoginUserProvider';
 
 export const Header = () => {
   const loginUser = useLoginUser();
   return (
     <header className="sticky flex justify-between px-8 w-screen h-16 bg-teal-400 items-center drop-shadow-2xl border-b border-gray-300 shadow-md">
-      <h1 className="font-bold text-2xl"><Link href={'/'}>bsample</Link></h1>
+      <h1 className="font-bold text-2xl">
+        <Link href={'/'}>bsample</Link>
+      </h1>
       <div className="flex gap-3">
         {loginUser ? (
           <Link href={'/setting'}>

@@ -1,18 +1,11 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { z } from "zod"
+import Link from 'next/link';
+import { z } from 'zod';
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 const EMAIL_VERIFICATION_NONE = 'NONE';
 const EMAIL_VERIFICATION_YET = 'YET';
@@ -21,21 +14,21 @@ const EMAIL_VERIFICATION_VERIFIED = 'VERIFIED';
 
 export const emailSchema = {
   email: z.string().min(2, {
-    message: "Email must be at least 2 characters.",
+    message: 'Email must be at least 2 characters.',
   }),
   email_pin: z.string().min(2, {
-    message: "Pin Number that you accepted by your Email",
+    message: 'Pin Number that you accepted by your Email',
   }),
   email_status: z.string().min(2, {}),
 };
 
 export const emailDefaultValue = defaultValue => ({
   email: defaultValue,
-  email_pin: "",
+  email_pin: '',
   email_status: EMAIL_VERIFICATION_NONE,
 });
 
-const emailOnChange = (field, setValue) => (e) => {
+const emailOnChange = (field, setValue) => e => {
   if (e.target.value) {
     field.onChange(e);
     setValue('email_status', EMAIL_VERIFICATION_YET);
@@ -43,7 +36,7 @@ const emailOnChange = (field, setValue) => (e) => {
     field.onChange(e);
     setValue('email_status', EMAIL_VERIFICATION_NONE);
   }
-}
+};
 
 const emailSend = (getValues, setValue, sendEmail) => async () => {
   const email = getValues('email');
@@ -53,7 +46,7 @@ const emailSend = (getValues, setValue, sendEmail) => async () => {
   }
 };
 
-const emailPinOnChange = (field, getValues, setValue, verifyEmail) => async (e) => {
+const emailPinOnChange = (field, getValues, setValue, verifyEmail) => async e => {
   const pinNumber = e.target.value;
 
   field.onChange(e);
@@ -67,7 +60,6 @@ const emailPinOnChange = (field, getValues, setValue, verifyEmail) => async (e) 
 };
 
 export const EmailInputForm = ({ form, sendEmail, verifyEmail }) => {
-
   const emailStatus = form.getValues('email_status');
   return (
     <>
@@ -78,14 +70,16 @@ export const EmailInputForm = ({ form, sendEmail, verifyEmail }) => {
           <FormItem>
             <FormLabel>Email</FormLabel>
             <FormControl>
-              <Input placeholder="email" {...field} onChange={emailOnChange(field, form.setValue)}/>
+              <Input placeholder="email" {...field} onChange={emailOnChange(field, form.setValue)} />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
       {emailStatus === EMAIL_VERIFICATION_YET && (
-          <Button type="botton" onClick={emailSend(form.getValues, form.setValue, sendEmail)}>Email Pin Number 送信</Button>
+        <Button type="botton" onClick={emailSend(form.getValues, form.setValue, sendEmail)}>
+          Email Pin Number 送信
+        </Button>
       )}
       {emailStatus === EMAIL_VERIFICATION_SEND && (
         <FormField
@@ -107,9 +101,7 @@ export const EmailInputForm = ({ form, sendEmail, verifyEmail }) => {
           )}
         />
       )}
-      {emailStatus === EMAIL_VERIFICATION_VERIFIED && (
-        <p>Email Verified</p>
-      )}
+      {emailStatus === EMAIL_VERIFICATION_VERIFIED && <p>Email Verified</p>}
     </>
   );
 };

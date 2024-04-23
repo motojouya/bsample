@@ -10,7 +10,11 @@
   "scripts": {
     "compile": "tsc && tsc-alias",
     "start": "node ./dist/src/index.js",
-    "codegen": "graphql-codegen --config graphql.config.ts"
+    "codegen": "graphql-codegen --config graphql.config.ts",
+    "prettier": "npx prettier --write 'src/**/*.ts'",
+    "eslint": "eslint --fix --ext .ts src",
+    "prettier_check": "npx prettier --check 'src/**/*.ts'",
+    "eslint_check": "eslint --max-warnings=0 --ext .ts src"
   },
   "dependencies": {
     "@apollo/server": "^4.10.1",

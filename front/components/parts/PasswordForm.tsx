@@ -1,24 +1,18 @@
-"use client"
+'use client';
 
-import { z } from "zod"
+import { z } from 'zod';
 
-import { Input } from "@/components/ui/input"
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Input } from '@/components/ui/input';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 export const passwordSchema = {
   password: z.string().min(2, {
-    message: "Email must be at least 2 characters.",
+    message: 'Email must be at least 2 characters.',
   }),
 };
 
 export const passwordDefaultValue = {
-  password: "",
+  password: '',
 };
 
 export const PasswordInputForm = ({ form }) => (
@@ -38,4 +32,3 @@ export const PasswordInputForm = ({ form }) => (
     />
   </>
 );
-

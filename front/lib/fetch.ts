@@ -1,10 +1,9 @@
-import { GraphQLClient } from 'graphql-request'
+import { GraphQLClient } from 'graphql-request';
 
 // TODO fetcherの戻り値がanyなの気になる
 export type Fetcher = (query: string, variables: any) => Promise<any>;
 export type GetFetcher = () => Fetcher;
 export const getFetcher = () => {
-
   const serverHost = process.env.SERVER_HOST;
   const serverPort = process.env.SERVER_PORT;
 

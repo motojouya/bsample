@@ -1,19 +1,13 @@
-"use client"
+'use client';
 
-import { z } from "zod"
+import { z } from 'zod';
 
-import { Input } from "@/components/ui/input"
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Input } from '@/components/ui/input';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 export const userNameSchema = {
   user_name: z.string().min(2, {
-    message: "Email must be at least 2 characters.",
+    message: 'Email must be at least 2 characters.',
   }),
 };
 
@@ -38,4 +32,3 @@ export const UserNameInputForm = ({ form }) => (
     />
   </>
 );
-

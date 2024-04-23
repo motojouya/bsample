@@ -1,40 +1,28 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import Link from "next/link"
+import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Form } from "@/components/ui/form"
-import { useToast } from "@/components/ui/use-toast"
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
+import { useToast } from '@/components/ui/use-toast';
 
-import {
-  userNameSchema,
-  userNameDefaultValue,
-  UserNameInputForm,
-} from '@/components/parts/UserNameForm';
-import {
-  passwordSchema,
-  passwordDefaultValue,
-  PasswordInputForm,
-} from '@/components/parts/PasswordForm';
-import {
-  emailSchema,
-  emailDefaultValue,
-  EmailInputForm,
-} from '@/components/parts/EmailForm';
+import { userNameSchema, userNameDefaultValue, UserNameInputForm } from '@/components/parts/UserNameForm';
+import { passwordSchema, passwordDefaultValue, PasswordInputForm } from '@/components/parts/PasswordForm';
+import { emailSchema, emailDefaultValue, EmailInputForm } from '@/components/parts/EmailForm';
 
-import { gql } from 'graphql-request'
-import { getFetcher } from "@/lib/fetch"
+import { gql } from 'graphql-request';
+import { getFetcher } from '@/lib/fetch';
 
 const FormSchema = z.object({
   ...userNameSchema,
   ...passwordSchema,
-  ...emailSchema
+  ...emailSchema,
 });
 
 const registerMutation = gql`
@@ -102,12 +90,12 @@ const verifyEmail = (registerSessionId: number, toast) => async (email: string, 
     emailPin,
   });
 
-  if (res.verifyEmail && res.verifyEmail.verified) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.verifyEmail && res.verifyEmail.verified) {
+    // TODO errorの場合error objectが返ってくる。type guardしたいが
     return true;
-
   } else {
     toast({
-      title: "You submitted the following values:",
+      title: 'You submitted the following values:',
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(res, null, 2)}</code>
@@ -123,13 +111,13 @@ const sendEmail = (setRegisterSessionId, toast) => async (email: string) => {
     email: email,
   });
 
-  if (res.sendEmail && res.sendEmail.register_session_id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.sendEmail && res.sendEmail.register_session_id) {
+    // TODO errorの場合error objectが返ってくる。type guardしたいが
     setRegisterSessionId(parseInt(res.sendEmail.register_session_id));
     return true;
-
   } else {
     toast({
-      title: "You submitted the following values:",
+      title: 'You submitted the following values:',
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(res, null, 2)}</code>
@@ -148,12 +136,12 @@ const onSubmit = (registerSessionId, router, toast) => async (formData: z.infer<
     password: formData.password,
   });
 
-  if (res.register && res.register.id) { // TODO errorの場合error objectが返ってくる。type guardしたいが
+  if (res.register && res.register.id) {
+    // TODO errorの場合error objectが返ってくる。type guardしたいが
     router.push('/'); // TODO server componentをreloadしてくれないとlogin userが取得できないが大丈夫？
-
   } else {
     toast({
-      title: "You submitted the following values:",
+      title: 'You submitted the following values:',
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(res, null, 2)}</code>
@@ -161,19 +149,18 @@ const onSubmit = (registerSessionId, router, toast) => async (formData: z.infer<
       ),
     });
   }
-}
+};
 
 export default function Register() {
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      ...(userNameDefaultValue('')),
+      ...userNameDefaultValue(''),
       ...passwordDefaultValue,
-      ...(emailDefaultValue(''))
+      ...emailDefaultValue(''),
     },
   });
-  const [ registerSessionId, setRegisterSessionId ] = useState<number>(null);
+  const [registerSessionId, setRegisterSessionId] = useState<number>(null);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -183,7 +170,7 @@ export default function Register() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit(registerSessionId, router, toast))} className="w-2/3 space-y-6">
             <UserNameInputForm form={form} />
-            <EmailInputForm 
+            <EmailInputForm
               form={form}
               verifyEmail={verifyEmail(registerSessionId, toast)}
               sendEmail={sendEmail(setRegisterSessionId, toast)}
