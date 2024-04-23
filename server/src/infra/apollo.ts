@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 export interface ApolloContext {
   rdbSource: DataSource;
   mailer: Mailer;
-  session?: Session & Partial<SessionData>;
+  session: Session & Partial<SessionData>;
 }
 
 export type GetApolloServer = (httpServer: http.Server) => ApolloServer<ApolloContext>;

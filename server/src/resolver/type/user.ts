@@ -4,7 +4,7 @@ import { ApolloContext } from 'src/infra/apollo.js';
 import { User as UserEntity } from 'src/entity/user.js';
 
 type IdentifierResolver = UserResolvers<ApolloContext, ResolversParentTypes['User'] & Partial<UserEntity>>['id'];
-const identifier: IdentifierResolver = (parent, args, contextValue, info) => parent.identifier;
+const identifier: IdentifierResolver = (parent, args, contextValue, info) => (parent as UserEntity).identifier;
 
 // TODO data loader
 type EmailInformationResolver = UserResolvers<
@@ -12,7 +12,7 @@ type EmailInformationResolver = UserResolvers<
   ResolversParentTypes['User'] & Partial<UserEntity>
 >['email_information'];
 const emailInformation: EmailInformationResolver = async (parent, args, contextValue, info) => {
-  const { user_id, email } = parent;
+  const { user_id, email } = parent as UserEntity;
   return await getEmail(contextValue.rdbSource)(user_id, email);
 };
 
