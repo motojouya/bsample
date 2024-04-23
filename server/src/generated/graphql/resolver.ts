@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { GraphQLResolveInfo } from 'graphql';
 import { DeepPartial } from 'utility-types';
 export type Maybe<T> = T | null;

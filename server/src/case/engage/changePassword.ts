@@ -1,6 +1,5 @@
-import { Repository, DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { User } from 'src/entity/user.js';
-import { UserEmail } from 'src/entity/userEmail.js';
 import { UserPassword } from 'src/entity/userPassword.js';
 import { transact } from 'src/infra/rdb.js';
 

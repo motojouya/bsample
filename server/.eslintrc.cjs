@@ -1,6 +1,6 @@
 module.exports = {
   parser: "@typescript-eslint/parser",
-  plugins: ["react", "react-hooks", "@typescript-eslint"],
+  plugins: ["@typescript-eslint"],
   root: true,
   env: {
     // "browser": true,
@@ -16,20 +16,22 @@ module.exports = {
       "jsx": true
     },
   },
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  },
+  "settings": {},
   ignorePatterns: ["dist"],
   extends: [
     "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
     "prettier",
   ],
   rules: {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "none",
+      }
+    ]
     // "no-console": "off",
     // "no-alert": "off",
     // "import/prefer-default-export": "off",
@@ -55,8 +57,6 @@ module.exports = {
     //     message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.',
     //   },
     // ],
-    // "react/jsx-uses-react": "off",
-    // "react/react-in-jsx-scope": "off",
     // "@typescript-eslint/no-floating-promises": [
     //   "error",
     //   {

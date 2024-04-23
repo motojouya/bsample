@@ -14,8 +14,11 @@ const codegenConfig: CodegenConfig = {
         "typescript-resolvers",
         {
           add: {
-            content: "import { DeepPartial } from 'utility-types';"
-          }
+            content: [
+              "/* eslint-disable */",
+              "import { DeepPartial } from 'utility-types';",
+            ]
+          },
         },
         // {
         //   add: {

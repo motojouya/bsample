@@ -15,7 +15,7 @@ export type AnonymousUser = {
 };
 
 // TODO 引数anyでいいんだっけ
-export function isAnonymousUser(anonymousUser: any): anonymousUser is AnonymousUser {
+export function isAnonymousUser(anonymousUser: object): anonymousUser is AnonymousUser {
   return 'register_session_id' in anonymousUser && 'email' in anonymousUser;
 }
 
@@ -32,7 +32,7 @@ export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) 
       return new RecordAlreadyExistError('user_email', duplicatedEmail, 'email exists already!');
     }
 
-    let registerSessionId = null;
+    let registerSessionId: number | null = null;
     let user = loginUser;
     if (!user) {
       registerSessionId = getRandomInt(10000); // TODO UID

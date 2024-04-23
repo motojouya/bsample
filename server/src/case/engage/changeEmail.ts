@@ -1,4 +1,4 @@
-import { Repository, DataSource, Not, IsNull } from 'typeorm';
+import { DataSource, Not, IsNull } from 'typeorm';
 import { User } from 'src/entity/user.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 import { transact, RecordNotFoundError } from 'src/infra/rdb.js';
