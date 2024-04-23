@@ -3,25 +3,30 @@ import { User } from 'src/entity/user.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 import { transact, RecordAlreadyExistError } from 'src/infra/rdb.js';
 import { Mailer, MailSendError } from 'src/infra/mail.js';
-import { addHours } from "date-fns";
+import { addHours } from 'date-fns';
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
 export type AnonymousUser = {
-  register_session_id: number,
-  email: string,
+  register_session_id: number;
+  email: string;
 };
 
 // TODO 引数anyでいいんだっけ
 export function isAnonymousUser(anonymousUser: any): anonymousUser is AnonymousUser {
-  return "register_session_id" in anonymousUser && "email" in anonymousUser;
+  return 'register_session_id' in anonymousUser && 'email' in anonymousUser;
 }
 
-export type SendEmail = (rdbSource: DataSource, mailer: Mailer, loginUser: User | null, email: string) => Promise<AnonymousUser | RecordAlreadyExistError | MailSendError>;
+export type SendEmail = (
+  rdbSource: DataSource,
+  mailer: Mailer,
+  loginUser: User | null,
+  email: string,
+) => Promise<AnonymousUser | RecordAlreadyExistError | MailSendError>;
 export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) => {
-  return await transact(rdbSource, async (manager) => {
+  return await transact(rdbSource, async manager => {
     const duplicatedEmail = await getDuplicatedEmail(manager, email);
     if (duplicatedEmail) {
       return new RecordAlreadyExistError('user_email', duplicatedEmail, 'email exists already!');
@@ -53,7 +58,7 @@ export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) 
     });
     await manager.save(useremail);
 
-    const error = await mailer.send(email, `PINコードの送付 PIN:${email_pin}`, "PINコードを送付します");
+    const error = await mailer.send(email, `PINコードの送付 PIN:${email_pin}`, 'PINコードを送付します');
     if (error) {
       return error;
     }
@@ -77,21 +82,21 @@ export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) 
 //  where (ue.email = ${email} and ue.assign_expired_date > now())
 //     or (ue.email = ${email} and u.email = ${email})
 //      ;
-type GetDuplicatedEmail = (manager: EntityManager, email: string) => Promise<UserEmail | null>
+type GetDuplicatedEmail = (manager: EntityManager, email: string) => Promise<UserEmail | null>;
 const getDuplicatedEmail: GetDuplicatedEmail = async (manager, email) => {
   return await manager.findOne(UserEmail, {
-    relations: [ 'user' ],
+    relations: ['user'],
     where: [
       {
         email: email,
-        assign_expired_date: Raw((alias) => `${alias} > NOW()`),
+        assign_expired_date: Raw(alias => `${alias} > NOW()`),
       },
       {
         email: email,
         user: {
           email: email,
-        }
+        },
       },
-    ]
+    ],
   });
 };

@@ -1,5 +1,5 @@
 import { EmailResolvers } from 'src/generated/graphql/resolver.js';
-import { getEmail } from "src/case/engage/user.js";
+import { getEmail } from 'src/case/engage/user.js';
 
 const verified = async (parent, args, contextValue, info) => {
   const { verified, verified_date } = parent;
@@ -8,7 +8,7 @@ const verified = async (parent, args, contextValue, info) => {
   } else {
     return !!verified_date;
   }
-}
+};
 
 export const Email: EmailResolvers = {
   verified,

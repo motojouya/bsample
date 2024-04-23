@@ -1,5 +1,5 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // import { readFileSync } from 'fs';
 
@@ -7,10 +7,10 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { loadSchemaSync } from '@graphql-tools/load';
 import { addResolversToSchema } from '@graphql-tools/schema';
 
-import { ApolloServer } from "@apollo/server"
+import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import { DataSource } from "typeorm"
+import { DataSource } from 'typeorm';
 
 import { resolvers } from 'src/resolver/index.js';
 import { SessionData } from 'express-session';
@@ -21,12 +21,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 interface ApolloContext {
-  rdbSource: DataSource,
-  mailer: Mailer,
-  session?: SessionData,
+  rdbSource: DataSource;
+  mailer: Mailer;
+  session?: SessionData;
 }
 
-export const getApolloServer = (httpServer) => {
+export const getApolloServer = httpServer => {
   // const typeDefs = readFileSync('../api/schema/schema.graphql', { encoding: 'utf-8' });
   //
   // return new ApolloServer<ApolloContext>({
@@ -45,10 +45,11 @@ export const getApolloServer = (httpServer) => {
   });
 };
 
-export const getApolloExpressMiddleware = (server) => expressMiddleware(server, {
-  context: async ({ req }: { req: RequestWithContext }) => ({
-    rdbSource: req.context.rdbSource,
-    mailer: req.context.mailer,
-    session: req.session,
-  }),
-});
+export const getApolloExpressMiddleware = server =>
+  expressMiddleware(server, {
+    context: async ({ req }: { req: RequestWithContext }) => ({
+      rdbSource: req.context.rdbSource,
+      mailer: req.context.mailer,
+      session: req.session,
+    }),
+  });

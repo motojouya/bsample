@@ -2,18 +2,18 @@ import http from 'http';
 
 import cors from 'cors';
 import express from 'express';
-import { NextFunction, Request, Response } from "express"
+import { NextFunction, Request, Response } from 'express';
 
 import createError from 'http-errors';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import "reflect-metadata"; // for typeorm
-import { DataSource } from "typeorm"
+import 'reflect-metadata'; // for typeorm
+import { DataSource } from 'typeorm';
 
 import { getApolloServer, getApolloExpressMiddleware } from 'src/infra/apollo.js';
 import { getSessionConfig } from 'src/infra/redisSession.js';
-import { getDataSource } from 'src/infra/rdb.js'
-import { Mailer, getMailer } from "src/infra/mail.js";
+import { getDataSource } from 'src/infra/rdb.js';
+import { Mailer, getMailer } from 'src/infra/mail.js';
 
 type ExpressContext = {
   rdbSource: DataSource;
@@ -28,7 +28,7 @@ type ExpressContext = {
 // }
 
 export interface RequestWithContext extends Request {
-  context?: ExpressContext
+  context?: ExpressContext;
 }
 
 const run = async () => {
@@ -73,14 +73,9 @@ const run = async () => {
   //   res.render('error');
   // });
 
-  app.use(
-    '/graphql',
-    cors<cors.CorsRequest>(),
-    express.json(),
-    getApolloExpressMiddleware(apollo),
-  );
+  app.use('/graphql', cors<cors.CorsRequest>(), express.json(), getApolloExpressMiddleware(apollo));
 
-  await new Promise<void>((resolve) => httpServer.listen({ port: process.env.PORT }, resolve));
+  await new Promise<void>(resolve => httpServer.listen({ port: process.env.PORT }, resolve));
   console.log(`🚀  Server ready`);
 };
 

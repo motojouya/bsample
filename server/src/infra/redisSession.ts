@@ -26,6 +26,6 @@ export const getSessionConfig = () => {
       path: '/',
       httpOnly: true,
       maxAge: 10 * 1000,
-    }
+    },
   });
 };

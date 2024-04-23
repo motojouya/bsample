@@ -6,10 +6,6 @@ export default {
   User,
   UserEmail,
   UserPassword,
-}
+};
 
-export const list = [
-  User,
-  UserEmail,
-  UserPassword,
-];
+export const list = [User, UserEmail, UserPassword];

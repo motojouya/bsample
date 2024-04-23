@@ -1,4 +1,4 @@
-import { getUserById } from "src/case/engage/user.js";
+import { getUserById } from 'src/case/engage/user.js';
 
 const loginUser = async (parent, args, contextValue, info) => {
   const loginUser = contextValue.session.loginUser;
@@ -10,4 +10,4 @@ const loginUser = async (parent, args, contextValue, info) => {
 
 export default {
   loginUser,
-}
+};

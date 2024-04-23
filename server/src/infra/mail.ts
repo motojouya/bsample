@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 export type Send = (to: string, subject: string, text: string, from?: string) => Promise<null | MailSendError>;
 export type Mailer = {
@@ -6,10 +6,10 @@ export type Mailer = {
 };
 
 export type MailContents = {
-  from: string,
-  to: string,
-  subject: string,
-  text: string,
+  from: string;
+  to: string;
+  subject: string;
+  text: string;
 };
 
 export class MailSendError extends Error {
@@ -17,14 +17,15 @@ export class MailSendError extends Error {
     readonly contents: MailContents,
     readonly exception: object,
     readonly message: string,
-  ) { super(); }
+  ) {
+    super();
+  }
 }
 
 export const getMailer = async () => {
-
   const defaultFrom = process.env.MAIL_FROM || '';
   const transporter = nodemailer.createTransport({
-    ignoreTLS:true,
+    ignoreTLS: true,
     host: process.env.MAIL_HOST,
     // auth: {
     //   user: process.env.MAIL_USER,
@@ -49,7 +50,6 @@ export const getMailer = async () => {
       const sendResult = await transporter.sendMail(mailContents);
       console.log('send result.', sendResult);
       return null;
-
     } catch (e) {
       console.log('send failed.', e);
       return new MailSendError(e, mailContents, 'failed send email');
