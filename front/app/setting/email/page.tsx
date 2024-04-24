@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -132,8 +132,11 @@ const verifyEmail: VerifyEmail = toast => async (email, email_pin) => {
   }
 };
 
-type OnSubmit = (router: AppRouterInstance, toast: ToastFunc) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
-const onSubmit: OnSubmit = (router, toast) => async (formData) => {
+type OnSubmit = (
+  router: AppRouterInstance,
+  toast: ToastFunc,
+) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
+const onSubmit: OnSubmit = (router, toast) => async formData => {
   const res = await fetcher(changeEmailMutation, {
     input: {
       email: formData.email,
@@ -156,11 +159,10 @@ const onSubmit: OnSubmit = (router, toast) => async (formData) => {
 };
 
 const EmailForm: React.FC<{
-  loginUser: LoginUser,
-  router: AppRouterInstance,
-  toast: ToastFunc,
+  loginUser: LoginUser;
+  router: AppRouterInstance;
+  toast: ToastFunc;
 }> = ({ loginUser, router, toast }) => {
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -197,14 +199,7 @@ export default function Page() {
   if (!loginUser) {
     router.push('/');
     return null;
-
   } else {
-    return (
-      <EmailForm
-        loginUser={loginUser}
-        toast={toast}
-        router={router}
-      />
-    );
+    return <EmailForm loginUser={loginUser} toast={toast} router={router} />;
   }
 }

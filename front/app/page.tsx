@@ -41,4 +41,4 @@ const StoreCard: React.FC<{}> = () => {
       </CardFooter>
     </Card>
   );
-}
+};

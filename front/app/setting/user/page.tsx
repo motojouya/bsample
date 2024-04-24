@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -38,7 +38,10 @@ const changeUserInformationMutation = gql`
 
 const fetcher = getFetcher();
 
-type OnSubmit = (router: AppRouterInstance, toast: ToastFunc) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
+type OnSubmit = (
+  router: AppRouterInstance,
+  toast: ToastFunc,
+) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
 const onSubmit: OnSubmit = (router, toast) => async formData => {
   const res = await fetcher(changeUserInformationMutation, {
     input: {
@@ -62,11 +65,10 @@ const onSubmit: OnSubmit = (router, toast) => async formData => {
 };
 
 const UserInformationForm: React.FC<{
-  loginUser: LoginUser,
-  router: AppRouterInstance,
-  toast: ToastFunc,
+  loginUser: LoginUser;
+  router: AppRouterInstance;
+  toast: ToastFunc;
 }> = ({ loginUser, router, toast }) => {
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -93,7 +95,7 @@ const UserInformationForm: React.FC<{
       </div>
     </main>
   );
-}
+};
 
 export default function Page() {
   const { toast } = useToast();
@@ -103,14 +105,7 @@ export default function Page() {
   if (!loginUser) {
     router.push('/');
     return null;
-
   } else {
-    return (
-      <UserInformationForm
-        loginUser={loginUser}
-        toast={toast}
-        router={router}
-      />
-    );
+    return <UserInformationForm loginUser={loginUser} toast={toast} router={router} />;
   }
 }

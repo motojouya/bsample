@@ -12,10 +12,11 @@ const EMAIL_VERIFICATION_NONE = 'NONE' as const;
 const EMAIL_VERIFICATION_YET = 'YET' as const;
 const EMAIL_VERIFICATION_SEND = 'SEND' as const;
 const EMAIL_VERIFICATION_VERIFIED = 'VERIFIED' as const;
-type EmailStatus = typeof EMAIL_VERIFICATION_NONE
-                 | typeof EMAIL_VERIFICATION_YET 
-                 | typeof EMAIL_VERIFICATION_SEND 
-                 | typeof EMAIL_VERIFICATION_VERIFIED; 
+type EmailStatus =
+  | typeof EMAIL_VERIFICATION_NONE
+  | typeof EMAIL_VERIFICATION_YET
+  | typeof EMAIL_VERIFICATION_SEND
+  | typeof EMAIL_VERIFICATION_VERIFIED;
 
 export const emailSchema = {
   email: z.string().min(2, {
@@ -28,9 +29,9 @@ export const emailSchema = {
 };
 
 export type EmailValue = {
-  email: string,
-  email_pin: string,
-  email_status: EmailStatus,
+  email: string;
+  email_pin: string;
+  email_status: EmailStatus;
 };
 
 export type EmailDefaultValue = (defaultValue: string) => EmailValue;
@@ -43,7 +44,10 @@ export const emailDefaultValue: EmailDefaultValue = defaultValue => ({
 export type SendEmail = (email: string) => Promise<boolean>;
 export type VerifyEmail = (email: string, email_pin: number) => Promise<boolean>;
 
-type EmailOnChange = (field: ControllerRenderProps<any, "email">, setValue: UseFormSetValue<any>) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+type EmailOnChange = (
+  field: ControllerRenderProps<any, 'email'>,
+  setValue: UseFormSetValue<any>,
+) => (event: React.ChangeEvent<HTMLInputElement>) => void;
 const emailOnChange: EmailOnChange = (field, setValue) => event => {
   if (event.target.value) {
     field.onChange(event);
@@ -54,7 +58,11 @@ const emailOnChange: EmailOnChange = (field, setValue) => event => {
   }
 };
 
-type EmailSend = (getValues: UseFormGetValues<any>, setValue: UseFormSetValue<any>, sendEmail: SendEmail) => () => Promise<void>;
+type EmailSend = (
+  getValues: UseFormGetValues<any>,
+  setValue: UseFormSetValue<any>,
+  sendEmail: SendEmail,
+) => () => Promise<void>;
 const emailSend: EmailSend = (getValues, setValue, sendEmail) => async () => {
   const email = getValues('email');
   const result = await sendEmail(email);
@@ -63,7 +71,12 @@ const emailSend: EmailSend = (getValues, setValue, sendEmail) => async () => {
   }
 };
 
-type EmailPinOnChange = (field: ControllerRenderProps<any, "email_pin">, getValues: UseFormGetValues<any>, setValue: UseFormSetValue<any>, verifyEmail: VerifyEmail) => (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+type EmailPinOnChange = (
+  field: ControllerRenderProps<any, 'email_pin'>,
+  getValues: UseFormGetValues<any>,
+  setValue: UseFormSetValue<any>,
+  verifyEmail: VerifyEmail,
+) => (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
 const emailPinOnChange: EmailPinOnChange = (field, getValues, setValue, verifyEmail) => async event => {
   const pinNumber = event.target.value;
 
@@ -79,9 +92,9 @@ const emailPinOnChange: EmailPinOnChange = (field, getValues, setValue, verifyEm
 
 // FIXME UseFormReturnの型が合わずanyにしちゃってる
 export const EmailInputForm: React.FC<{
-  form: UseFormReturn<any>,
-  sendEmail: SendEmail,
-  verifyEmail: VerifyEmail,
+  form: UseFormReturn<any>;
+  sendEmail: SendEmail;
+  verifyEmail: VerifyEmail;
 }> = ({ form, sendEmail, verifyEmail }) => {
   const emailStatus = form.getValues('email_status');
   return (

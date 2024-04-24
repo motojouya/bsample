@@ -13,7 +13,7 @@ export const userNameSchema = {
 };
 
 export type UserNameValue = {
-  user_name: string,
+  user_name: string;
 };
 
 export type UserNameDefaultValue = (defaultValue: string) => UserNameValue;

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -86,7 +86,10 @@ const verifyEmailMutation = gql`
 const fetcher = getFetcher();
 
 // TODO registerSessionId をうまく渡せるかな
-type VerifyEmail = (registerSessionId: number | null, toast: ToastFunc) => (email: string, emailPin: number) => Promise<boolean>;
+type VerifyEmail = (
+  registerSessionId: number | null,
+  toast: ToastFunc,
+) => (email: string, emailPin: number) => Promise<boolean>;
 const verifyEmail: VerifyEmail = (registerSessionId, toast) => async (email, emailPin) => {
   if (!registerSessionId) {
     throw new Error('registerSessionId should be exists.');
@@ -113,7 +116,10 @@ const verifyEmail: VerifyEmail = (registerSessionId, toast) => async (email, ema
   }
 };
 
-type SendEmail = (setRegisterSessionId: (registerSessionId: number) => void, toast: ToastFunc) => (email: string) => Promise<boolean>;
+type SendEmail = (
+  setRegisterSessionId: (registerSessionId: number) => void,
+  toast: ToastFunc,
+) => (email: string) => Promise<boolean>;
 const sendEmail: SendEmail = (setRegisterSessionId, toast) => async email => {
   const res = await fetcher(sendEmailMutation, {
     email: email,
@@ -136,8 +142,12 @@ const sendEmail: SendEmail = (setRegisterSessionId, toast) => async email => {
   }
 };
 
-type OnSubmit = (registerSessionId: number | null, router: AppRouterInstance, toast: ToastFunc) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
-const onSubmit: OnSubmit = (registerSessionId, router, toast) => async (formData) => {
+type OnSubmit = (
+  registerSessionId: number | null,
+  router: AppRouterInstance,
+  toast: ToastFunc,
+) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
+const onSubmit: OnSubmit = (registerSessionId, router, toast) => async formData => {
   if (!registerSessionId) {
     throw new Error('registerSessionId should be exists.');
   }

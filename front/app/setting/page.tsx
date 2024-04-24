@@ -30,7 +30,7 @@ const Links: React.FC<{}> = () => {
       </div>
     </main>
   );
-}
+};
 
 export default function Page() {
   const router = useRouter();
@@ -39,8 +39,7 @@ export default function Page() {
   if (!loginUser) {
     router.push('/');
     return null;
-
   } else {
-    return (<Links />);
+    return <Links />;
   }
 }

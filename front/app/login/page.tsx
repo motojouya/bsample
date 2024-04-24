@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -71,7 +71,10 @@ export default function Page() {
   );
 }
 
-type OnSubmit = (router: AppRouterInstance, toast: ToastFunc) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
+type OnSubmit = (
+  router: AppRouterInstance,
+  toast: ToastFunc,
+) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
 const onSubmit: OnSubmit = (router, toast) => async formData => {
   const res = await fetcher(query, {
     input: {
