@@ -34,6 +34,8 @@ jobs:
       - run: |
           ./build.sh
           docker compose up -d
+          docker compose exec server npm install
+          docker compose exec front npm install
       - run: ./dc server prettier_check
       - run: ./dc server eslint_check
       - run: ./dc server compile

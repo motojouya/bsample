@@ -12,9 +12,9 @@
     "start": "node ./dist/src/index.js",
     "codegen": "graphql-codegen --config graphql.config.ts",
     "prettier": "npx prettier --write 'src/**/*.ts'",
-    "eslint": "npx eslint -c .eslintrc.cjs --fix --ext .ts src",
+    "eslint": "npx eslint --fix --ext .ts src",
     "prettier_check": "npx prettier --check 'src/**/*.ts'",
-    "eslint_check": "npx eslint -c .eslintrc.cjs --max-warnings=0 --ext .ts src"
+    "eslint_check": "npx eslint --max-warnings=0 --ext .ts src"
   },
   "dependencies": {
     "@apollo/server": "^4.10.1",
