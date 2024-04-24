@@ -2,13 +2,15 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, Relation }
 import { UserEmail } from 'src/entity/userEmail.js';
 import { UserPassword } from 'src/entity/userPassword.js';
 
-export type UserSpecification = {
-  type: 'logined'
-  loginUser: User
-} | {
-  type: 'anonymous'
-  registerSessionId: number
-};
+export type UserSpecification =
+  | {
+      type: 'logined';
+      loginUser: User;
+    }
+  | {
+      type: 'anonymous';
+      registerSessionId: number;
+    };
 
 export type AnonymousUser = {
   register_session_id: number;

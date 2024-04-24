@@ -18,7 +18,6 @@ type EmailInformationResolver = UserResolvers<
   ResolversParentTypes['User'] & Partial<UserEntity>
 >['email_information'];
 const emailInformation: EmailInformationResolver = async (parent, args, contextValue, info) => {
-
   if (!parent.user_id || !parent.email) {
     console.log('parent user', parent);
     throw new TypeError('parent shoud be TypeORM User type. [resolver/type/user#emailInformation]');

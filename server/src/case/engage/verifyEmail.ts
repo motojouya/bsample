@@ -58,9 +58,10 @@ const getUserEmail: GetUserEmail = async (manager, userSpecification, email, ema
       email: email,
       email_pin: emailPin,
       assign_expired_date: Raw(alias => `${alias} > NOW()`),
-      user: userSpecification.type === 'logined' ?
-        { user_id: userSpecification.loginUser.user_id } :
-        { register_session_id: userSpecification.registerSessionId },
+      user:
+        userSpecification.type === 'logined'
+          ? { user_id: userSpecification.loginUser.user_id }
+          : { register_session_id: userSpecification.registerSessionId },
     },
   });
 };

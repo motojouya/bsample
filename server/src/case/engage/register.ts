@@ -11,13 +11,7 @@ export type Register = (
   email: string,
   password: string,
 ) => Promise<User | null | RecordNotFoundError>;
-export const register: Register = async (
-  rdbSource,
-  register_session_id,
-  name,
-  email,
-  password,
-) => {
+export const register: Register = async (rdbSource, register_session_id, name, email, password) => {
   return await transact(rdbSource, async manager => {
     // TODO register_session_idをexpiredさせるタイミングがあったほうがいいかも
     const user = await manager.findOne(User, {
