@@ -44,9 +44,7 @@ type OnSubmit = (
 ) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
 const onSubmit: OnSubmit = (router, toast) => async formData => {
   const res = await fetcher(changeUserInformationMutation, {
-    input: {
-      name: formData.user_name,
-    },
+    name: formData.user_name,
   });
 
   if (res.changeUserInformation && res.changeUserInformation.id) {

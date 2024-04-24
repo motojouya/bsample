@@ -44,9 +44,7 @@ type OnSubmit = (
 ) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
 const onSubmit: OnSubmit = (router, toast) => async formData => {
   const res = await fetcher(changePasswordMutation, {
-    input: {
-      password: formData.password,
-    },
+    password: formData.password,
   });
 
   if (res.changePassword && res.changePassword.id) {

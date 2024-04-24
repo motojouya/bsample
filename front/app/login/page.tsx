@@ -77,10 +77,8 @@ type OnSubmit = (
 ) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
 const onSubmit: OnSubmit = (router, toast) => async formData => {
   const res = await fetcher(query, {
-    input: {
-      id: formData.user_id,
-      password: formData.password,
-    },
+    id: formData.user_id,
+    password: formData.password,
   });
 
   if (res.login) {

@@ -85,9 +85,7 @@ const fetcher = getFetcher();
 type SendEmail = (toast: ToastFunc) => (email: string) => Promise<boolean>;
 const sendEmail: SendEmail = toast => async email => {
   const res = await fetcher(sendEmailMutation, {
-    input: {
-      email: email,
-    },
+    email: email,
   });
 
   if (res.sendEmail && res.sendEmail.id) {
@@ -109,11 +107,9 @@ const sendEmail: SendEmail = toast => async email => {
 type VerifyEmail = (toast: ToastFunc) => (email: string, email_pin: number) => Promise<boolean>;
 const verifyEmail: VerifyEmail = toast => async (email, email_pin) => {
   const res = await fetcher(verifyEmailMutation, {
-    input: {
-      register_session_id: null,
-      email,
-      email_pin,
-    },
+    register_session_id: null,
+    email,
+    email_pin,
   });
 
   if (res.verifyEmail && res.verifyEmail.verified) {
@@ -138,9 +134,7 @@ type OnSubmit = (
 ) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
 const onSubmit: OnSubmit = (router, toast) => async formData => {
   const res = await fetcher(changeEmailMutation, {
-    input: {
-      email: formData.email,
-    },
+    email: formData.email,
   });
 
   if (res.changeEmail && res.changeEmail.id) {
