@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -9,14 +10,15 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form } from '@/components/ui/form';
-import { toast } from '@/components/ui/use-toast';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast, ToastFunc } from '@/components/ui/use-toast';
 
 import { userIdSchema, userIdDefaultValue, UserIdInputForm } from '@/components/parts/UserIdForm';
 import { passwordSchema, passwordDefaultValue, PasswordInputForm } from '@/components/parts/PasswordForm';
 
 import { gql } from 'graphql-request';
 import { getFetcher } from '@/lib/fetch';
+
+export const dynamic = 'force-dynamic';
 
 const fetcher = getFetcher();
 const query = gql`
@@ -36,7 +38,7 @@ const FormSchema = z.object({
   ...passwordSchema,
 });
 
-export default function Home() {
+export default function Page() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -69,7 +71,8 @@ export default function Home() {
   );
 }
 
-const onSubmit = (router, toast) => async (formData: z.infer<typeof FormSchema>) => {
+type OnSubmit = (router: AppRouterInstance, toast: ToastFunc) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
+const onSubmit: OnSubmit = (router, toast) => async formData => {
   const res = await fetcher(query, {
     input: {
       id: formData.user_id,

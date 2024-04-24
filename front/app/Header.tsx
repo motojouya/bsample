@@ -3,7 +3,9 @@
 import Link from 'next/link';
 import { useLoginUser } from '@/app/LoginUserProvider';
 
-export const Header = () => {
+export const dynamic = 'force-dynamic';
+
+export const Header: React.FC<{}> = () => {
   const loginUser = useLoginUser();
   return (
     <header className="sticky flex justify-between px-8 w-screen h-16 bg-teal-400 items-center drop-shadow-2xl border-b border-gray-300 shadow-md">

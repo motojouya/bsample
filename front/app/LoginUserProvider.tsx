@@ -8,14 +8,14 @@ export type LoginUser = {
   email: string;
 };
 
-type Props = {
-  children: ReactNode;
-  user: LoginUser | null;
-};
-
 const LoginUserContext = createContext<LoginUser | null>(null);
 
-export const useLoginUser = () => useContext(LoginUserContext);
-export const LoginUserProvider = ({ children, user }: Props) => {
+export type UseLoginUser = () => LoginUser | null;
+export const useLoginUser: UseLoginUser = () => useContext(LoginUserContext);
+
+export const LoginUserProvider: React.FC<{
+  children: ReactNode;
+  user: LoginUser | null;
+}> = ({ children, user }) => {
   return <LoginUserContext.Provider value={user}>{children}</LoginUserContext.Provider>;
 };

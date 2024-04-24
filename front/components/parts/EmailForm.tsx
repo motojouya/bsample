@@ -6,11 +6,16 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { ControllerRenderProps, UseFormSetValue, UseFormGetValues, UseFormReturn } from 'react-hook-form';
 
-const EMAIL_VERIFICATION_NONE = 'NONE';
-const EMAIL_VERIFICATION_YET = 'YET';
-const EMAIL_VERIFICATION_SEND = 'SEND';
-const EMAIL_VERIFICATION_VERIFIED = 'VERIFIED';
+const EMAIL_VERIFICATION_NONE = 'NONE' as const;
+const EMAIL_VERIFICATION_YET = 'YET' as const;
+const EMAIL_VERIFICATION_SEND = 'SEND' as const;
+const EMAIL_VERIFICATION_VERIFIED = 'VERIFIED' as const;
+type EmailStatus = typeof EMAIL_VERIFICATION_NONE
+                 | typeof EMAIL_VERIFICATION_YET 
+                 | typeof EMAIL_VERIFICATION_SEND 
+                 | typeof EMAIL_VERIFICATION_VERIFIED; 
 
 export const emailSchema = {
   email: z.string().min(2, {
@@ -22,23 +27,35 @@ export const emailSchema = {
   email_status: z.string().min(2, {}),
 };
 
-export const emailDefaultValue = defaultValue => ({
+export type EmailValue = {
+  email: string,
+  email_pin: string,
+  email_status: EmailStatus,
+};
+
+export type EmailDefaultValue = (defaultValue: string) => EmailValue;
+export const emailDefaultValue: EmailDefaultValue = defaultValue => ({
   email: defaultValue,
   email_pin: '',
   email_status: EMAIL_VERIFICATION_NONE,
 });
 
-const emailOnChange = (field, setValue) => e => {
-  if (e.target.value) {
-    field.onChange(e);
+export type SendEmail = (email: string) => Promise<boolean>;
+export type VerifyEmail = (email: string, email_pin: number) => Promise<boolean>;
+
+type EmailOnChange = (field: ControllerRenderProps<any, "email">, setValue: UseFormSetValue<any>) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+const emailOnChange: EmailOnChange = (field, setValue) => event => {
+  if (event.target.value) {
+    field.onChange(event);
     setValue('email_status', EMAIL_VERIFICATION_YET);
   } else {
-    field.onChange(e);
+    field.onChange(event);
     setValue('email_status', EMAIL_VERIFICATION_NONE);
   }
 };
 
-const emailSend = (getValues, setValue, sendEmail) => async () => {
+type EmailSend = (getValues: UseFormGetValues<any>, setValue: UseFormSetValue<any>, sendEmail: SendEmail) => () => Promise<void>;
+const emailSend: EmailSend = (getValues, setValue, sendEmail) => async () => {
   const email = getValues('email');
   const result = await sendEmail(email);
   if (result) {
@@ -46,10 +63,11 @@ const emailSend = (getValues, setValue, sendEmail) => async () => {
   }
 };
 
-const emailPinOnChange = (field, getValues, setValue, verifyEmail) => async e => {
-  const pinNumber = e.target.value;
+type EmailPinOnChange = (field: ControllerRenderProps<any, "email_pin">, getValues: UseFormGetValues<any>, setValue: UseFormSetValue<any>, verifyEmail: VerifyEmail) => (event: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+const emailPinOnChange: EmailPinOnChange = (field, getValues, setValue, verifyEmail) => async event => {
+  const pinNumber = event.target.value;
 
-  field.onChange(e);
+  field.onChange(event);
   if (pinNumber && pinNumber.length === 6) {
     const email = getValues('email');
     const result = await verifyEmail(email, parseInt(pinNumber));
@@ -59,7 +77,12 @@ const emailPinOnChange = (field, getValues, setValue, verifyEmail) => async e =>
   }
 };
 
-export const EmailInputForm = ({ form, sendEmail, verifyEmail }) => {
+// FIXME UseFormReturnの型が合わずanyにしちゃってる
+export const EmailInputForm: React.FC<{
+  form: UseFormReturn<any>,
+  sendEmail: SendEmail,
+  verifyEmail: VerifyEmail,
+}> = ({ form, sendEmail, verifyEmail }) => {
   const emailStatus = form.getValues('email_status');
   return (
     <>
@@ -77,7 +100,7 @@ export const EmailInputForm = ({ form, sendEmail, verifyEmail }) => {
         )}
       />
       {emailStatus === EMAIL_VERIFICATION_YET && (
-        <Button type="botton" onClick={emailSend(form.getValues, form.setValue, sendEmail)}>
+        <Button type="button" onClick={emailSend(form.getValues, form.setValue, sendEmail)}>
           Email Pin Number 送信
         </Button>
       )}

@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { UseFormReturn } from 'react-hook-form';
 
 export const userIdSchema = {
   user_id: z.string().min(2, {
@@ -15,7 +16,7 @@ export const userIdDefaultValue = {
   user_id: '',
 };
 
-export const UserIdInputForm = ({ form }) => (
+export const UserIdInputForm: React.FC<{ form: UseFormReturn<any> }> = ({ form }) => (
   <>
     <FormField
       control={form.control}

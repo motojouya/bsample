@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime"
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,7 +11,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form } from '@/components/ui/form';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast, ToastFunc } from '@/components/ui/use-toast';
 
 import { userNameSchema, userNameDefaultValue, UserNameInputForm } from '@/components/parts/UserNameForm';
 import { passwordSchema, passwordDefaultValue, PasswordInputForm } from '@/components/parts/PasswordForm';
@@ -18,6 +19,8 @@ import { emailSchema, emailDefaultValue, EmailInputForm } from '@/components/par
 
 import { gql } from 'graphql-request';
 import { getFetcher } from '@/lib/fetch';
+
+export const dynamic = 'force-dynamic';
 
 const FormSchema = z.object({
   ...userNameSchema,
@@ -83,7 +86,11 @@ const verifyEmailMutation = gql`
 const fetcher = getFetcher();
 
 // TODO registerSessionId をうまく渡せるかな
-const verifyEmail = (registerSessionId: number, toast) => async (email: string, emailPin: number) => {
+type VerifyEmail = (registerSessionId: number | null, toast: ToastFunc) => (email: string, emailPin: number) => Promise<boolean>;
+const verifyEmail: VerifyEmail = (registerSessionId, toast) => async (email, emailPin) => {
+  if (!registerSessionId) {
+    throw new Error('registerSessionId should be exists.');
+  }
   const res = await fetcher(verifyEmailMutation, {
     registerSessionId,
     email,
@@ -106,7 +113,8 @@ const verifyEmail = (registerSessionId: number, toast) => async (email: string, 
   }
 };
 
-const sendEmail = (setRegisterSessionId, toast) => async (email: string) => {
+type SendEmail = (setRegisterSessionId: (registerSessionId: number) => void, toast: ToastFunc) => (email: string) => Promise<boolean>;
+const sendEmail: SendEmail = (setRegisterSessionId, toast) => async email => {
   const res = await fetcher(sendEmailMutation, {
     email: email,
   });
@@ -128,7 +136,11 @@ const sendEmail = (setRegisterSessionId, toast) => async (email: string) => {
   }
 };
 
-const onSubmit = (registerSessionId, router, toast) => async (formData: z.infer<typeof FormSchema>) => {
+type OnSubmit = (registerSessionId: number | null, router: AppRouterInstance, toast: ToastFunc) => (formData: z.infer<typeof FormSchema>) => Promise<void>;
+const onSubmit: OnSubmit = (registerSessionId, router, toast) => async (formData) => {
+  if (!registerSessionId) {
+    throw new Error('registerSessionId should be exists.');
+  }
   const res = await fetcher(registerMutation, {
     registerSessionId: registerSessionId,
     name: formData.user_name,
@@ -151,7 +163,7 @@ const onSubmit = (registerSessionId, router, toast) => async (formData: z.infer<
   }
 };
 
-export default function Register() {
+export default function Page() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -160,7 +172,7 @@ export default function Register() {
       ...emailDefaultValue(''),
     },
   });
-  const [registerSessionId, setRegisterSessionId] = useState<number>(null);
+  const [registerSessionId, setRegisterSessionId] = useState<number | null>(null);
   const { toast } = useToast();
   const router = useRouter();
 

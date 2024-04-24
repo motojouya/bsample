@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { Input } from '@/components/ui/input';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { UseFormReturn } from 'react-hook-form';
 
 export const passwordSchema = {
   password: z.string().min(2, {
@@ -15,7 +16,8 @@ export const passwordDefaultValue = {
   password: '',
 };
 
-export const PasswordInputForm = ({ form }) => (
+// FIXME UseFormReturnの型が合わずanyにしちゃってる
+export const PasswordInputForm: React.FC<{ form: UseFormReturn<any> }> = ({ form }) => (
   <>
     <FormField
       control={form.control}

@@ -1,6 +1,10 @@
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useLoginUser } from '@/app/LoginUserProvider';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+const Links: React.FC<{}> = () => {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex w-full max-w-sm items-center space-x-2">
@@ -26,4 +30,17 @@ export default function Home() {
       </div>
     </main>
   );
+}
+
+export default function Page() {
+  const router = useRouter();
+
+  const loginUser = useLoginUser();
+  if (!loginUser) {
+    router.push('/');
+    return null;
+
+  } else {
+    return (<Links />);
+  }
 }

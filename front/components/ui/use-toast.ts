@@ -168,6 +168,7 @@ function toast({ ...props }: Toast) {
     update,
   }
 }
+export type ToastFunc = typeof toast;
 
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)

@@ -5,7 +5,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Link from 'next/link';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export default function Page() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex w-full max-w-sm items-center space-x-2">
@@ -19,7 +21,7 @@ export default function Home() {
   );
 }
 
-function StoreCard() {
+const StoreCard: React.FC<{}> = () => {
   return (
     <Card className="w-[350px]">
       <CardHeader>

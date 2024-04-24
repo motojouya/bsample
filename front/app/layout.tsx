@@ -8,6 +8,8 @@ import { Header } from '@/app/Header';
 import { gql } from 'graphql-request';
 import { getFetcher } from '@/lib/fetch';
 
+export const dynamic = 'force-dynamic';
+
 const fetcher = getFetcher();
 const inter = Inter({ subsets: ['latin'] });
 
@@ -38,7 +40,7 @@ export default async function RootLayout({
   //   name: 'motojouya',
   //   email: 'motojouya@example.com',
   // };
-  const res = await fetcher(loginUserQuery, null);
+  const res = await fetcher(loginUserQuery, {});
   const user = res.loginUser;
   return (
     <html lang="en">
