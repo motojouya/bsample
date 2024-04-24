@@ -7,6 +7,7 @@ export const getUserById: GetUserById = rdbSource => userId =>
   rdbSource.manager.findOne(User, {
     where: {
       user_id: userId,
+      active: true,
     },
   });
 

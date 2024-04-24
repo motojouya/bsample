@@ -51,7 +51,9 @@ export const getApolloServer: GetApolloServer = httpServer => {
 // eslint-disable-next-line @typescript-eslint/require-await
 const getContext: ContextFunction<[{ req: RequestWithContext }], ApolloContext> = async ({ req }) => {
   return {
+    // @ts-expect-error: contextはundefinedの可能性があるように定義されているが、この段階においては必ず存在する
     rdbSource: req.context.rdbSource,
+    // @ts-expect-error: contextはundefinedの可能性があるように定義されているが、この段階においては必ず存在する
     mailer: req.context.mailer,
     session: req.session,
   };

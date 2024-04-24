@@ -1,22 +1,13 @@
 import { EntityManager, DataSource, Raw } from 'typeorm';
-import { User } from 'src/entity/user.js';
+import { User, AnonymousUser } from 'src/entity/user.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 import { transact, RecordAlreadyExistError } from 'src/infra/rdb.js';
 import { Mailer, MailSendError } from 'src/infra/mail.js';
 import { addHours } from 'date-fns';
 
-function getRandomInt(max) {
+// TODO randomは実質状態なので、モジュールを引数に渡したい
+function getRandomInt(max: number) {
   return Math.floor(Math.random() * max);
-}
-
-export type AnonymousUser = {
-  register_session_id: number;
-  email: string;
-};
-
-// TODO 引数anyでいいんだっけ
-export function isAnonymousUser(anonymousUser: object): anonymousUser is AnonymousUser {
-  return 'register_session_id' in anonymousUser && 'email' in anonymousUser;
 }
 
 export type SendEmail = (
@@ -24,7 +15,7 @@ export type SendEmail = (
   mailer: Mailer,
   loginUser: User | null,
   email: string,
-) => Promise<AnonymousUser | RecordAlreadyExistError | MailSendError>;
+) => Promise<User | AnonymousUser | RecordAlreadyExistError | MailSendError>;
 export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) => {
   return await transact(rdbSource, async manager => {
     const duplicatedEmail = await getDuplicatedEmail(manager, email);
@@ -33,14 +24,14 @@ export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) 
     }
 
     let registerSessionId: number | null = null;
-    let user = loginUser;
+    let user: User | null = loginUser;
     if (!user) {
       registerSessionId = getRandomInt(10000); // TODO UID
       user = manager.create(User, {
         identifier: registerSessionId.toString(),
-        name: null,
+        // name: null,
         register_session_id: registerSessionId,
-        email: null,
+        // email: null,
         active: false,
       });
       await manager.save(user);
@@ -49,14 +40,14 @@ export const sendEmail: SendEmail = async (rdbSource, mailer, loginUser, email) 
     const email_pin = getRandomInt(999999);
     const assignExpiredDate = addHours(new Date(), 1);
 
-    const useremail = manager.create(UserEmail, {
+    const userEmail: UserEmail = manager.create(UserEmail, {
       user_id: user.user_id,
       email: email,
       email_pin: email_pin,
-      verified_date: null,
+      // verified_date: null,
       assign_expired_date: assignExpiredDate,
     });
-    await manager.save(useremail);
+    await manager.save(userEmail);
 
     const error = await mailer.send(email, `PINコードの送付 PIN:${email_pin}`, 'PINコードを送付します');
     if (error) {

@@ -1,18 +1,17 @@
 import { EntityManager, DataSource, Raw } from 'typeorm';
-import { User } from 'src/entity/user.js';
+import { UserSpecification } from 'src/entity/user.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 import { transact, RecordNotFoundError } from 'src/infra/rdb.js';
 
 export type VerifyEmail = (
   rdbSource: DataSource,
-  loginUser: User,
-  register_session_id: number,
+  userSpecification: UserSpecification,
   email: string,
   email_pin: number,
 ) => Promise<UserEmail | null | RecordNotFoundError>;
-export const verifyEmail: VerifyEmail = async (rdbSource, loginUser, registerSessionId, email, emailPin) => {
+export const verifyEmail: VerifyEmail = async (rdbSource, userSpecification, email, emailPin) => {
   return await transact(rdbSource, async manager => {
-    const userEmail = await getUserEmail(manager, loginUser, email, emailPin, registerSessionId);
+    const userEmail = await getUserEmail(manager, userSpecification, email, emailPin);
     if (!userEmail) {
       return new RecordNotFoundError('user_email', { email }, 'email is not found or pin is not correct!');
     }
@@ -48,25 +47,20 @@ export const verifyEmail: VerifyEmail = async (rdbSource, loginUser, registerSes
 //      ;
 type GetUserEmail = (
   manager: EntityManager,
-  user: User | null,
+  userSpecification: UserSpecification,
   email: string,
   emailPin: number,
-  registerSessionId: number | null,
 ) => Promise<UserEmail | null>;
-const getUserEmail: GetUserEmail = async (manager, user, email, emailPin, registerSessionId) => {
+const getUserEmail: GetUserEmail = async (manager, userSpecification, email, emailPin) => {
   return await manager.findOne(UserEmail, {
     relations: ['user'],
     where: {
       email: email,
       email_pin: emailPin,
       assign_expired_date: Raw(alias => `${alias} > NOW()`),
-      user: user
-        ? {
-            user_id: user.user_id,
-          }
-        : {
-            register_session_id: registerSessionId,
-          },
+      user: userSpecification.type === 'logined' ?
+        { user_id: userSpecification.loginUser.user_id } :
+        { register_session_id: userSpecification.registerSessionId },
     },
   });
 };

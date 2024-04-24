@@ -13,7 +13,7 @@ input VerifyEmailInput {
 union VerifyEmailReturn = Email | RecordNotFoundError
 
 input RegisterInput {
-  register_session_id: Int
+  register_session_id: Int!
   name: String!
   email: String!
   password: String!
@@ -41,10 +41,10 @@ input PasswordInput {
 }
 
 type Mutation {
-  sendEmail(input: SendEmailInput): SendEmailReturn
-  verifyEmail(input: VerifyEmailInput): VerifyEmailReturn
-  register(input: RegisterInput): RegisterReturn
-  login(input: LoginInput): User
+  sendEmail(input: SendEmailInput!): SendEmailReturn
+  verifyEmail(input: VerifyEmailInput!): VerifyEmailReturn
+  register(input: RegisterInput!): RegisterReturn
+  login(input: LoginInput!): User
   changeUserInformation(input: UserInput!): User
   changeEmail(input: EmailInput!): EmailChangeReturn
   changePassword(input: PasswordInput!): User

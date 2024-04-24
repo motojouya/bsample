@@ -80,22 +80,22 @@ export type MutationChangeUserInformationArgs = {
 
 
 export type MutationLoginArgs = {
-  input?: InputMaybe<LoginInput>;
+  input: LoginInput;
 };
 
 
 export type MutationRegisterArgs = {
-  input?: InputMaybe<RegisterInput>;
+  input: RegisterInput;
 };
 
 
 export type MutationSendEmailArgs = {
-  input?: InputMaybe<SendEmailInput>;
+  input: SendEmailInput;
 };
 
 
 export type MutationVerifyEmailArgs = {
-  input?: InputMaybe<VerifyEmailInput>;
+  input: VerifyEmailInput;
 };
 
 export type PasswordInput = {
@@ -121,7 +121,7 @@ export type RegisterInput = {
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  register_session_id?: InputMaybe<Scalars['Int']['input']>;
+  register_session_id: Scalars['Int']['input'];
 };
 
 export type RegisterReturn = RecordNotFoundError | User;
@@ -314,10 +314,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   changeEmail?: Resolver<Maybe<ResolversTypes['EmailChangeReturn']>, ParentType, ContextType, RequireFields<MutationChangeEmailArgs, 'input'>>;
   changePassword?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'input'>>;
   changeUserInformation?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationChangeUserInformationArgs, 'input'>>;
-  login?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationLoginArgs>>;
-  register?: Resolver<Maybe<ResolversTypes['RegisterReturn']>, ParentType, ContextType, Partial<MutationRegisterArgs>>;
-  sendEmail?: Resolver<Maybe<ResolversTypes['SendEmailReturn']>, ParentType, ContextType, Partial<MutationSendEmailArgs>>;
-  verifyEmail?: Resolver<Maybe<ResolversTypes['VerifyEmailReturn']>, ParentType, ContextType, Partial<MutationVerifyEmailArgs>>;
+  login?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'input'>>;
+  register?: Resolver<Maybe<ResolversTypes['RegisterReturn']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'input'>>;
+  sendEmail?: Resolver<Maybe<ResolversTypes['SendEmailReturn']>, ParentType, ContextType, RequireFields<MutationSendEmailArgs, 'input'>>;
+  verifyEmail?: Resolver<Maybe<ResolversTypes['VerifyEmailReturn']>, ParentType, ContextType, RequireFields<MutationVerifyEmailArgs, 'input'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {

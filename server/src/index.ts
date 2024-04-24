@@ -20,13 +20,6 @@ type ExpressContext = {
   mailer: Mailer;
 };
 
-// declare namespace e {
-//   // export interface Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>> {
-//   export interface Request {
-//     context?: ExpressContext
-//   }
-// }
-
 export interface RequestWithContext extends Request {
   context?: ExpressContext;
 }

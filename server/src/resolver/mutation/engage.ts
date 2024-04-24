@@ -1,6 +1,7 @@
 import engage from 'src/case/engage/index.js';
 import { MutationResolvers, ResolversParentTypes } from 'src/generated/graphql/resolver.js';
 import { ApolloContext } from 'src/infra/apollo.js';
+import { UserSpecification } from 'src/entity/user.js';
 
 export class AuthenticationError extends Error {
   constructor(
@@ -22,7 +23,7 @@ const sendEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation
   const {
     input: { email },
   } = args;
-  const loginUser = contextValue.session.loginUser;
+  const loginUser = contextValue.session.loginUser || null;
 
   return await engage.sendEmail(rdbSource, mailer, loginUser, email);
 };
@@ -37,13 +38,24 @@ const verifyEmail: MutationResolvers<ApolloContext, ResolversParentTypes['Mutati
   const {
     input: { register_session_id, email, email_pin },
   } = args;
-  const loginUser = contextValue.session.loginUser;
+  const loginUser = contextValue.session.loginUser || null;
 
-  if (!register_session_id && !loginUser) {
+  let userSpecification: UserSpecification | null = null;
+  if (loginUser) {
+    userSpecification = {
+      type: 'logined',
+      loginUser,
+    };
+  } else if (register_session_id) {
+    userSpecification = {
+      type: 'anonymous',
+      registerSessionId: register_session_id,
+    };
+  } else {
     return new AuthenticationError(null, 'not authenticated');
   }
 
-  return await engage.verifyEmail(rdbSource, loginUser, register_session_id, email, email_pin);
+  return await engage.verifyEmail(rdbSource, userSpecification, email, email_pin);
 };
 
 const register: MutationResolvers<ApolloContext, ResolversParentTypes['Mutation']>['register'] = async (

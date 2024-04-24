@@ -5,11 +5,10 @@ import {
   EmailChangeReturnResolvers,
   ResolversParentTypes,
 } from 'src/generated/graphql/resolver.js';
-import { User } from 'src/entity/user.js';
+import { User, isAnonymousUser } from 'src/entity/user.js';
 import { UserEmail } from 'src/entity/userEmail.js';
 import { RecordNotFoundError, RecordAlreadyExistError } from 'src/infra/rdb.js';
 import { MailSendError } from 'src/infra/mail.js';
-import { isAnonymousUser } from 'src/case/engage/sendEmail.js';
 import { ApolloContext } from 'src/infra/apollo.js';
 
 export const SendEmailReturn: SendEmailReturnResolvers<ApolloContext, ResolversParentTypes['SendEmailReturn']> = {

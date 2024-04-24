@@ -26,13 +26,13 @@ export type GetMailer = () => Mailer;
 export const getMailer: GetMailer = () => {
   const defaultFrom = process.env.MAIL_FROM || '';
   const transporter = nodemailer.createTransport({
-    // @ts-expect-error: compileできない理由がわからないのでFIXME
+    // @ts-expect-error: createTransportのoverloadで型判別がつかないが、型が似すぎていてどの型を指定するべきか不明 FIXME
     ignoreTLS: true,
     host: process.env.MAIL_HOST,
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASSWORD,
-    },
+    // auth: {
+    //   user: process.env.MAIL_USER,
+    //   pass: process.env.MAIL_PASSWORD,
+    // },
     port: process.env.MAIL_PORT, // 1025
     secure: false, // true for 465, false for other ports
     defaults: {

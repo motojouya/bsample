@@ -12,13 +12,13 @@ declare module 'express-session' {
 
 export const getSessionConfig = () => {
   const redisClient = new Redis({
-    host: process.env.REDIS_HOST, //'memory',
-    port: parseInt(process.env.REDIS_PORT),
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT as string), // TODO 本当はnull checkしたほうがいい
     password: '',
   });
 
   return session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET as string, // TODO 本当はnull checkしたほうがいい
     resave: false,
     saveUninitialized: true,
     store: new RedisStore({ client: redisClient }),
