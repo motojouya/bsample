@@ -14,6 +14,9 @@ export const getFetcher = () => {
     client = new GraphQLClient(`http://${serverHost}:${serverPort}/graphql`);
   }
 
+  // FIXME dataのみ返しているが、cookieを返す必要がある
+  // server componentsとブラウザではclientが違うので、cookieの値が違い、sessionが維持されない。
+  // そこで、server componentsでもresponseに同様のset cookieを入れてやればいける気がするが、逆に重大なバグにもなりそう。
   const fetcher: Fetcher = (query, variables) => client.request(query, variables);
 
   return fetcher;

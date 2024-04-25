@@ -25,7 +25,7 @@ export const getSessionConfig = () => {
     cookie: {
       path: '/',
       httpOnly: true,
-      maxAge: 10 * 1000,
+      maxAge: 60 * 60 * 1000, // TODO 一旦1h
     },
   });
 };
